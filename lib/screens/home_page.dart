@@ -1,95 +1,74 @@
-import 'package:flutter/material.dart';
+import 'package.flutter/material.dart';
+// 1. IMPORT DATA MODEL KITA
+import 'package:kanhas/models/canteen_data.dart';
+// 2. IMPORT HALAMAN TUJUAN (MENU PAGE)
+import 'package:kanhas/screens/menu_page.dart';
 
-// Ini adalah StatelessWidget. Halaman ini tidak perlu
-// mengubah state-nya sendiri, dia hanya menerima data (role)
-// dan menampilkannya.
 class HomePage extends StatelessWidget {
-  
-  // 1. DEKLARASIKAN VARIABEL UNTUK MENANGKAP DATA ROLE
-  // 'final' berarti data ini tidak akan berubah setelah
-  // halaman ini dibuat.
   final String role;
-
-  // 2. BUAT CONSTRUCTOR UNTUK MENERIMA DATA ROLE
-  // 'required this.role' mewajibkan siapa pun yang memanggil
-  // HomePage untuk mengirimkan data 'role'.
-  // Inilah yang kita panggil dari LoginPage: HomePage(role: 'Admin')
   const HomePage({super.key, required this.role});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
-      // 3. TAMPILKAN ROLE DI APPBAR
-      // Ini membuktikan bahwa data 'role' berhasil diterima.
       appBar: AppBar(
-        title: Text('Kanhas - ($role)'), // Contoh: "Kanhas - (Admin)"
+        title: Text('Kanhas - ($role)'),
         centerTitle: true,
       ),
-      
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
-            // 4. UCAPAN SELAMAT DATANG SPESIFIK
             Text(
               'Selamat datang, $role!',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            
             const SizedBox(height: 20),
-            
             const Text(
               'Silakan pilih kantin:',
               style: TextStyle(fontSize: 18),
             ),
-            
             const SizedBox(height: 10),
 
-            // 5. AREA UNTUK DAFTAR KANTIN
-            // Kita akan gunakan 'Expanded' agar ListView mengambil
-            // sisa ruang yang tersedia di layar.
+            // 3. UBAH DARI LISTVIEW MENJADI LISTVIEW.BUILDER
             Expanded(
-              child: ListView(
-                // Ini adalah daftar placeholder.
-                // Nanti kita akan ganti dengan data kantin asli.
-                children: [
-                  
-                  // Ini adalah placeholder untuk 1 kantin
-                  ListTile(
-                    leading: const Icon(Icons.store), // Ikon kantin
-                    title: const Text('Kantin Teknik'),
-                    subtitle: const Text('Gedung FT, Lantai 1'),
-                    trailing: const Icon(Icons.chevron_right), // Panah ke kanan
-                    onTap: () {
-                      // Aksi navigasi ke MenuPage akan ditambahkan di sini
-                      print('Kantin Teknik di-klik');
-                    },
-                  ),
-                  
-                  ListTile(
-                    leading: const Icon(Icons.store),
-                    title: const Text('Kantin Sastra'),
-                    subtitle: const Text('Area FIB'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      print('Kantin Sastra di-klik');
-                    },
-                  ),
-                  
-                  ListTile(
-                    leading: const Icon(Icons.store),
-                    title: const Text('Kantin MIPA'),
-                    subtitle: const Text('Pelataran FMIPA'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      print('Kantin MIPA di-klik');
-                    },
-                  ),
+              // ListView.builder adalah cara efisien untuk membuat daftar
+              // yang bisa di-scroll, terutama jika datanya banyak.
+              child: ListView.builder(
+                // Ambil jumlah item dari daftar kantin kita
+                itemCount: canteenList.length,
+                
+                // 'builder' akan membuat widget untuk setiap item
+                itemBuilder: (context, index) {
+                  // Ambil 1 kantin dari daftar berdasarkan 'index'-nya
+                  final Canteen canteen = canteenList[index];
 
-                ],
+                  // Kembalikan ListTile yang sudah diisi data asli
+                  return ListTile(
+                    leading: const Icon(Icons.store),
+                    
+                    // 4. GUNAKAN DATA ASLI DARI MODEL
+                    title: Text(canteen.name),
+                    subtitle: Text(canteen.location),
+                    trailing: const Icon(Icons.chevron_right),
+                    
+                    // 5. TAMBAHKAN NAVIGASI DI onTap
+                    onTap: () {
+                      // Aksi navigasi ke MenuPage
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MenuPage(
+                            // Kirim seluruh objek 'canteen'
+                            // ke halaman menu
+                            canteen: canteen,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ),
           ],
