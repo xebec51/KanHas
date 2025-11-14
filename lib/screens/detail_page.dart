@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
+import 'package:kanhas/models/cart_model.dart'; // <-- TAMBAHKAN INI
 
 // Tetap StatefulWidget, tapi state-nya akan lebih kompleks
 class DetailPage extends StatefulWidget {
@@ -166,9 +167,25 @@ class _DetailPageState extends State<DetailPage> {
               ),
               child: ElevatedButton(
                 onPressed: () {
-                  // Aksi 'Add to cart' akan ditambahkan di sini
-                  print('Menambahkan ${widget.menu.name} sebanyak $quantity');
-                  // Kembali ke halaman sebelumnya
+                  // --- LOGIKA ADD TO CART ---
+                  // 1. Buat CartItem baru
+                  final item = CartItem(
+                    menu: widget.menu,
+                    quantity: quantity, // Ambil state kuantitas
+                  );
+
+                  // 2. Tambahkan ke daftar keranjang global
+                  cart.add(item);
+
+                  // 3. Tampilkan notifikasi
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${item.menu.name} (x${item.quantity}) ditambahkan ke keranjang.'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+
+                  // 4. Kembali ke halaman sebelumnya
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(

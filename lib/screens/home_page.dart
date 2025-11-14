@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/screens/menu_page.dart';
+import 'package:kanhas/screens/cart_page.dart';
 // 1. Kita akan buat Halaman Keranjang nanti
 // import 'package:kanhas/screens/cart_page.dart';
 
@@ -19,11 +20,11 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined),
             onPressed: () {
-              // Aksi navigasi ke CartPage (Halaman Keranjang)
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => const CartPage()),
-              // );
+              // Navigasi ke Halaman Keranjang
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CartPage()),
+              );
             },
           ),
         ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/screens/detail_page.dart';
+import 'package:kanhas/screens/cart_page.dart';
 
 // 1. UBAH MENJADI STATEFULWIDGET
 class MenuPage extends StatefulWidget {
@@ -26,7 +27,13 @@ class _MenuPageState extends State<MenuPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined),
-            onPressed: () { /* Navigasi ke CartPage nanti */ },
+            onPressed: () {
+              // Navigasi ke Halaman Keranjang
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CartPage()),
+              );
+            },
           ),
         ],
       ),
