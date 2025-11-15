@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
+import 'package:kanhas/models/user_model.dart'; // Impor user model
 import 'package:kanhas/screens/detail_page.dart';
 import 'package:kanhas/screens/cart_page.dart';
 
-// 1. UBAH MENJADI STATEFULWIDGET
+// Ubah jadi StatefulWidget
 class MenuPage extends StatefulWidget {
   final Canteen canteen;
-  const MenuPage({super.key, required this.canteen});
+  final User user; // Terima objek User
+  const MenuPage({super.key, required this.canteen, required this.user});
 
   @override
   State<MenuPage> createState() => _MenuPageState();
 }
 
 class _MenuPageState extends State<MenuPage> {
-  // Variabel state untuk melacak chip mana yang aktif
   String selectedCategory = 'All';
-  // (Kita akan tambahkan logika search dan filter nanti)
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Ambil nama kantin dari 'widget.canteen'
         title: Text(widget.canteen.name),
         centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined),
             onPressed: () {
-              // Navigasi ke Halaman Keranjang
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const CartPage()),
@@ -37,40 +35,34 @@ class _MenuPageState extends State<MenuPage> {
           ),
         ],
       ),
-      // 2. GUNAKAN SingleChildScrollView
-      // Ini agar seluruh halaman bisa di-scroll,
-      // menghindari overflow saat keyboard muncul atau item banyak
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 3. SEARCH BAR (TextField)
+              // Search Bar
               TextField(
                 decoration: InputDecoration(
                   hintText: 'Cari menu...',
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
-                  fillColor: Colors.grey[200], // Warna abu-abu muda
+                  fillColor: Colors.grey[200],
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30.0), // Bulat penuh
-                    borderSide: BorderSide.none, // Tanpa border
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
                   ),
                 ),
-                onChanged: (value) {
-                  // Logika filter akan ditambahkan di sini
-                },
+                onChanged: (value) {},
               ),
 
               const SizedBox(height: 20),
 
-              // 4. FILTER CHIPS (Horizontal List)
+              // Filter Chips
               _buildFilterChips(),
 
               const SizedBox(height: 20),
 
-              // 5. JUDUL "ALL ITEMS"
               Text(
                 'Semua Menu',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -80,24 +72,20 @@ class _MenuPageState extends State<MenuPage> {
 
               const SizedBox(height: 10),
 
-              // 6. GRIDVIEW UNTUK MENU
+              // GridView untuk Menu
               GridView.builder(
-                // Pengaturan penting untuk GridView di dalam Column
-                shrinkWrap: true, // Agar GridView pas dengan kontennya
-                physics: const NeverScrollableScrollPhysics(), // Agar tidak bentrok scroll
-
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 kolom
+                  crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 0.8, // Rasio kartu (sesuai 'CanteenCard')
+                  childAspectRatio: 0.8,
                 ),
-                // Ambil daftar menu dari 'widget.canteen'
                 itemCount: widget.canteen.menus.length,
                 itemBuilder: (context, index) {
                   final Menu menu = widget.canteen.menus[index];
 
-                  // 7. PANGGIL KARTU MENU YANG BARU
                   return MenuCard(
                     menu: menu,
                     onTap: () {
@@ -115,22 +103,36 @@ class _MenuPageState extends State<MenuPage> {
           ),
         ),
       ),
+
+      // --- FITUR ADMIN ---
+      // Tampilkan tombol FAB HANYA jika role-nya admin
+      floatingActionButton: (widget.user.role == UserRole.admin)
+          ? FloatingActionButton(
+        onPressed: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Fitur Tambah Menu untuk Admin!'),
+            ),
+          );
+        },
+        backgroundColor: Colors.red,
+        child: const Icon(Icons.add, color: Colors.white),
+      )
+          : null, // Jika bukan admin, tidak ada tombol
     );
   }
 
-  // Widget helper pribadi untuk membuat filter chips
+  // Widget helper untuk filter chips
   Widget _buildFilterChips() {
-    // Daftar kategori dummy (bisa Anda sesuaikan)
     final List<String> categories = ['All', 'Nasi', 'Minuman', 'Snack', 'Gorengan'];
 
     return SizedBox(
       height: 40,
       child: ListView.builder(
-        scrollDirection: Axis.horizontal, // Scroll ke samping
+        scrollDirection: Axis.horizontal,
         itemCount: categories.length,
         itemBuilder: (context, index) {
           final category = categories[index];
-          // Cek apakah chip ini yang sedang dipilih
           final bool isSelected = selectedCategory == category;
 
           return Padding(
@@ -138,18 +140,14 @@ class _MenuPageState extends State<MenuPage> {
             child: FilterChip(
               label: Text(category),
               selected: isSelected,
-              // 'onSelected' adalah inti dari StatefulWidget di sini
               onSelected: (bool selected) {
-                // Panggil setState untuk membangun ulang UI
-                // dengan chip yang baru terpilih
                 setState(() {
                   selectedCategory = category;
-                  // Nanti kita akan panggil fungsi filter di sini
                 });
               },
               backgroundColor: isSelected ? Colors.red[100] : Colors.grey[200],
-              selectedColor: Colors.red[100], // Warna saat terpilih
-              checkmarkColor: Colors.red, // Warna centang
+              selectedColor: Colors.red[100],
+              checkmarkColor: Colors.red,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
                 side: BorderSide.none,
@@ -162,8 +160,7 @@ class _MenuPageState extends State<MenuPage> {
   }
 }
 
-// 8. BUAT WIDGET KARTU MENU (Terpisah)
-// Ini mirip 'CanteenCard', tapi untuk 'Menu'
+// Widget untuk Kartu Menu (Tetap sama)
 class MenuCard extends StatelessWidget {
   final Menu menu;
   final VoidCallback onTap;
@@ -187,7 +184,6 @@ class MenuCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Gambar Placeholder
             Container(
               height: 120,
               width: double.infinity,
@@ -199,7 +195,6 @@ class MenuCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Nama Menu
                   Text(
                     menu.name,
                     style: const TextStyle(
@@ -210,12 +205,11 @@ class MenuCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  // Harga Menu
                   Text(
                     'Rp ${menu.price}',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.red[700], // Warna merah (sesuai tema)
+                      color: Colors.red[700],
                       fontWeight: FontWeight.w600,
                     ),
                   ),

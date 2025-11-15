@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kanhas/models/user_model.dart';
 import 'package:kanhas/screens/home_page.dart';
+import 'package:kanhas/screens/register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,7 +11,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Logic controller (TETAP SAMA)
+  // Logic controller
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -20,62 +22,66 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // Logic login (TETAP SAMA)
+  // Logic login BARU (mencari ke userList)
   void _login() {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-    if (username == 'mahasiswa' && password == '123') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(role: 'Mahasiswa'),
-        ),
-      );
+    // Cari user di 'database' userList
+    User? foundUser; // ? berarti bisa jadi 'null' (tidak ketemu)
+    try {
+      foundUser = userList.firstWhere((user) => user.username == username);
+    } catch (e) {
+      foundUser = null;
     }
-    else if (username == 'admin' && password == '123') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(role: 'Admin'),
-        ),
-      );
-    }
-    else {
+
+    if (foundUser == null) {
+      // Jika username tidak ada
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Username atau Password Salah!'),
+          content: Text('Username tidak ditemukan!'),
+        ),
+      );
+    } else if (foundUser.password != password) {
+      // Jika username ada TAPI password salah
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Password salah!'),
+        ),
+      );
+    } else {
+      // Jika SEMUA BENAR:
+      // Ganti navigasi agar mengirim seluruh OBJEK User
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          // Kirim seluruh objek user
+          builder: (context) => HomePage(user: foundUser!),
         ),
       );
     }
   }
 
-  // --- BUILD METHOD YANG DIROMBAK TOTAL ---
+  // UI Login Page
   @override
   Widget build(BuildContext context) {
-    // 1. HAPUS AppBar, GANTI DENGAN Scaffold + SafeArea
     return Scaffold(
-      // SafeArea menghindari konten menabrak status bar (jam, baterai)
       body: SafeArea(
         child: SingleChildScrollView(
-          // 2. Beri padding yang lebih besar di sisi-sisinya
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
             child: Column(
-              // 3. Ratakan konten ke kiri, bukan di tengah
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                // 4. JUDUL BESAR (Branding & Typography)
-                const SizedBox(height: 60), // Beri jarak dari atas
+                const SizedBox(height: 60),
                 Text(
                   'Selamat Datang\ndi Kanhas',
-                  // Gunakan style teks yang kuat
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Colors.red[700], // Warna merah tema kita
+                    color: Colors.red[700],
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -86,9 +92,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.grey[600],
                   ),
                 ),
-                const SizedBox(height: 50), // Jarak ke form
-
-                // --- FORM LOGIN (Kodenya sama seperti sebelumnya) ---
+                const SizedBox(height: 50),
                 TextField(
                   controller: _usernameController,
                   decoration: const InputDecoration(
@@ -98,9 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: Icon(Icons.person),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 TextField(
                   controller: _passwordController,
                   obscureText: true,
@@ -111,14 +113,11 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: Icon(Icons.lock),
                   ),
                 ),
-
-                const SizedBox(height: 40), // Jarak ke tombol
-
-                // --- TOMBOL LOGIN (Kodenya sama seperti sebelumnya) ---
+                const SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red, // Pastikan tombol juga merah
+                    backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
@@ -130,10 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
-
-                const SizedBox(height: 30), // Jarak ke link bawah
-
-                // 5. LINK "DAFTAR" (Pelengkap UI)
+                const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -142,8 +138,13 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     TextButton(
+                      // Navigasi ke Halaman Register
                       onPressed: () {
-                        // Belum berfungsi, tapi ini untuk UI
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const RegisterPage()),
+                        );
                       },
                       child: const Text(
                         'Daftar di sini',

@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
+import 'package:kanhas/models/user_model.dart'; // Impor user model
 import 'package:kanhas/screens/menu_page.dart';
 import 'package:kanhas/screens/cart_page.dart';
-// 1. Kita akan buat Halaman Keranjang nanti
-// import 'package:kanhas/screens/cart_page.dart';
 
 class HomePage extends StatelessWidget {
-  final String role;
-  const HomePage({super.key, required this.role});
+  // Ganti dari 'String role' menjadi 'User user'
+  final User user;
+  const HomePage({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kanhas - ($role)'),
+        // Tampilkan username dari objek user
+        title: Text('Kanhas - (${user.username})'),
         centerTitle: true,
-        // 2. TAMBAHKAN IKON KERANJANG DI APPBAR
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_cart_outlined),
             onPressed: () {
-              // Navigasi ke Halaman Keranjang
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const CartPage()),
@@ -34,39 +33,41 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Ucapkan selamat datang ke username
             Text(
-              'Selamat datang, $role!',
+              'Selamat datang, ${user.username}!',
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             Text(
               'Silakan pilih kantin:',
-              style: Theme.of(context).textTheme.titleLarge, // Style lebih baik
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 10),
 
-            // 3. UBAH DARI LISTVIEW MENJADI GRIDVIEW
             Expanded(
-              // GridView.builder untuk tata letak 2 kolom
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 kolom
-                  crossAxisSpacing: 16, // Jarak horizontal antar kartu
-                  mainAxisSpacing: 16, // Jarak vertikal antar kartu
-                  childAspectRatio: 0.8, // Rasio kartu (lebar vs tinggi)
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 0.8,
                 ),
                 itemCount: canteenList.length,
                 itemBuilder: (context, index) {
                   final Canteen canteen = canteenList[index];
 
-                  // 4. PANGGIL WIDGET KARTU KANTIN YANG BARU
                   return CanteenCard(
                     canteen: canteen,
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MenuPage(canteen: canteen),
+                          // Kirim 'canteen' DAN 'user' ke MenuPage
+                          builder: (context) => MenuPage(
+                            canteen: canteen,
+                            user: user,
+                          ),
                         ),
                       );
                     },
@@ -81,11 +82,10 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// 5. BUAT WIDGET TERPISAH UNTUK KARTU KANTIN
-// Ini adalah praktik 'clean code'
+// CanteenCard (Tetap sama, tidak perlu diubah)
 class CanteenCard extends StatelessWidget {
   final Canteen canteen;
-  final VoidCallback onTap; // Fungsi yang akan dipanggil saat di-klik
+  final VoidCallback onTap;
 
   const CanteenCard({
     super.key,
@@ -95,34 +95,28 @@ class CanteenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Gunakan 'InkWell' agar kartu bisa di-klik
     return InkWell(
       onTap: onTap,
       child: Card(
-        clipBehavior: Clip.antiAlias, // Memotong gambar agar pas
-        elevation: 4, // Efek bayangan
+        clipBehavior: Clip.antiAlias,
+        elevation: 4,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10), // Sudut melengkung
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // [GAMBAR PLACEHOLDER]
-            // Sesuai referensi, gambar ada di atas
             Container(
-              height: 120, // Tinggi gambar
+              height: 120,
               width: double.infinity,
               color: Colors.grey[300],
               child: const Icon(Icons.store, size: 80, color: Colors.grey),
             ),
-
-            // Area teks di bawah gambar
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Nama Kantin
                   Text(
                     canteen.name,
                     style: const TextStyle(
@@ -133,7 +127,6 @@ class CanteenCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  // Lokasi Kantin
                   Text(
                     canteen.location,
                     style: TextStyle(
