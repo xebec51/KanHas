@@ -3,7 +3,10 @@ import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/user_model.dart'; // Impor user model
 import 'package:kanhas/screens/detail_page.dart';
 import 'package:kanhas/screens/cart_page.dart';
-import 'package:kanhas/screens/add_menu_page.dart'; // <-- TAMBAHKAN INI
+import 'package:kanhas/screens/add_menu_page.dart';
+import 'package:provider/provider.dart';
+
+import '../models/canteen_model.dart'; // <-- TAMBAHKAN INI
 
 // Ubah jadi StatefulWidget
 class MenuPage extends StatefulWidget {
@@ -63,6 +66,7 @@ class _MenuPageState extends State<MenuPage> {
               const SizedBox(height: 10),
 
               // GridView untuk Menu
+              // GridView untuk Menu
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -76,16 +80,45 @@ class _MenuPageState extends State<MenuPage> {
                 itemBuilder: (context, index) {
                   final Menu menu = widget.canteen.menus[index];
 
-                  return MenuCard(
-                    menu: menu,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailPage(menu: menu),
+                  // 1. GUNAKAN STACK UNTUK MENUMPUK TOMBOL HAPUS
+                  return Stack(
+                    children: [
+                      // --- Kartu Menu (seperti sebelumnya) ---
+                      MenuCard(
+                        menu: menu,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailPage(menu: menu),
+                            ),
+                          );
+                        },
+                      ),
+
+                      // 2. TOMBOL HAPUS (HANYA UNTUK ADMIN)
+                      if (widget.user.role == UserRole.admin)
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: IconButton(
+                            icon: const Icon(Icons.delete_forever_rounded),
+                            color: Colors.white,
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.red.withOpacity(0.8),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              // 3. Panggil dialog konfirmasi
+                              _showDeleteConfirmationDialog(context, menu);
+                            },
+                          ),
                         ),
-                      );
-                    },
+                    ],
                   );
                 },
               ),
@@ -151,6 +184,50 @@ class _MenuPageState extends State<MenuPage> {
           );
         },
       ),
+    );
+  }
+
+  // --- FUNGSI BARU UNTUK DIALOG KONFIRMASI HAPUS ---
+  void _showDeleteConfirmationDialog(BuildContext context, Menu menu) {
+    // Tampilkan dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Hapus Menu'),
+          content: Text('Apakah Anda yakin ingin menghapus ${menu.name}?'),
+          actions: [
+            // Tombol Batal
+            TextButton(
+              child: const Text('Batal'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Tutup dialog
+              },
+            ),
+            // Tombol Hapus
+            TextButton(
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('Hapus'),
+              onPressed: () {
+                // Panggil fungsi hapus dari CanteenModel
+                context
+                    .read<CanteenModel>()
+                    .deleteMenuFromCanteen(widget.canteen, menu);
+
+                Navigator.of(dialogContext).pop(); // Tutup dialog
+
+                // Tampilkan notifikasi
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${menu.name} telah dihapus.'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
