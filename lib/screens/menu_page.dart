@@ -6,6 +6,7 @@ import 'package:kanhas/screens/detail_page.dart';
 import 'package:kanhas/screens/cart_page.dart';
 import 'package:kanhas/screens/add_menu_page.dart';
 import 'package:provider/provider.dart';
+import 'package:kanhas/screens/edit_menu_page.dart'; // Impor Halaman Edit
 
 class MenuPage extends StatefulWidget {
   final Canteen canteen;
@@ -21,10 +22,7 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    // 1. "Tonton" CanteenModel agar UI 'rebuild' saat data berubah
     final canteenModel = context.watch<CanteenModel>();
-
-    // 2. Ambil data kantin yang 'segar' dari model
     final Canteen currentCanteen = canteenModel.canteens.firstWhere(
           (c) => c.name == widget.canteen.name,
       orElse: () => widget.canteen,
@@ -32,7 +30,6 @@ class _MenuPageState extends State<MenuPage> {
 
     return Scaffold(
       appBar: AppBar(
-        // 3. Gunakan data 'segar'
         title: Text(currentCanteen.name),
         centerTitle: true,
       ),
@@ -42,7 +39,7 @@ class _MenuPageState extends State<MenuPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Bar (Tidak berubah)
+              // Search Bar
               TextField(
                 decoration: InputDecoration(
                   hintText: 'Cari menu...',
@@ -58,7 +55,7 @@ class _MenuPageState extends State<MenuPage> {
               ),
               const SizedBox(height: 20),
 
-              // Filter Chips (Tidak berubah)
+              // Filter Chips
               _buildFilterChips(),
               const SizedBox(height: 20),
 
@@ -74,24 +71,20 @@ class _MenuPageState extends State<MenuPage> {
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-
-                // --- PERBAIKAN UTAMA (UI) ---
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 kolom
-                  crossAxisSpacing: 16, // Jarak horizontal
-                  mainAxisSpacing: 16, // Jarak vertikal
-                  mainAxisExtent: 210, // 4. PAKSA TINGGI KARTU JADI 210px
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  mainAxisExtent: 210, // Tinggi Kartu Kaku
                 ),
-                // -----------------------------
-
-                // 5. Gunakan data 'segar'
                 itemCount: currentCanteen.menus.length,
                 itemBuilder: (context, index) {
-                  // 6. Gunakan data 'segar'
                   final Menu menu = currentCanteen.menus[index];
 
+                  // --- PERBAIKAN DI DALAM STACK ---
                   return Stack(
                     children: [
+                      // Anak #1: Kartu Menu
                       MenuCard(
                         menu: menu,
                         onTap: () {
@@ -103,7 +96,8 @@ class _MenuPageState extends State<MenuPage> {
                           );
                         },
                       ),
-                      // Tombol Hapus Admin (Tidak berubah)
+
+                      // Anak #2: Tombol Hapus (Hanya Admin)
                       if (widget.user.role == UserRole.admin)
                         Positioned(
                           top: 0,
@@ -120,14 +114,45 @@ class _MenuPageState extends State<MenuPage> {
                               ),
                             ),
                             onPressed: () {
-                              // 7. Kirim data 'segar' ke dialog
                               _showDeleteConfirmationDialog(
                                   context, currentCanteen, menu);
                             },
                           ),
                         ),
+
+                      // Anak #3: Tombol Edit (Hanya Admin)
+                      if (widget.user.role == UserRole.admin)
+                        Positioned(
+                          top: 40, // Posisikan di bawah tombol hapus
+                          right: 0,
+                          child: IconButton(
+                            icon: const Icon(Icons.edit, size: 20),
+                            color: Colors.white,
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.blue.withOpacity(0.8), // Warna beda
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              // Navigasi ke Halaman Edit
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditMenuPage(
+                                    canteen: currentCanteen,
+                                    menuToEdit: menu,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                     ],
                   );
+                  // --- AKHIR PERBAIKAN STACK ---
                 },
               ),
             ],
@@ -142,7 +167,6 @@ class _MenuPageState extends State<MenuPage> {
             context,
             MaterialPageRoute(
               builder: (context) => AddMenuPage(
-                // 8. Kirim data 'segar' ke halaman tambah
                 canteen: currentCanteen,
               ),
             ),
@@ -210,7 +234,6 @@ class _MenuPageState extends State<MenuPage> {
               style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Hapus'),
               onPressed: () {
-                // 10. Gunakan 'canteen' yang dikirim (data 'segar')
                 context
                     .read<CanteenModel>()
                     .deleteMenuFromCanteen(canteen, menu);
@@ -230,7 +253,7 @@ class _MenuPageState extends State<MenuPage> {
   }
 }
 
-// Widget Kartu Menu
+// Widget Kartu Menu (Tidak berubah)
 class MenuCard extends StatelessWidget {
   final Menu menu;
   final VoidCallback onTap;
@@ -254,7 +277,6 @@ class MenuCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Gambar
             Image.network(
               menu.imageUrl,
               height: 120,
@@ -278,17 +300,12 @@ class MenuCard extends StatelessWidget {
                 );
               },
             ),
-
-            // Area Teks
-            // 'Expanded' akan memaksa area ini mengisi
-            // sisa ruang yang ditinggalkan oleh gambar (210 - 120 = 90px)
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Nama Menu
                     Text(
                       menu.name,
                       style: const TextStyle(
@@ -299,7 +316,6 @@ class MenuCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    // Harga Menu
                     Text(
                       'Rp ${menu.price}',
                       style: TextStyle(
@@ -307,8 +323,8 @@ class MenuCard extends StatelessWidget {
                         color: Colors.red[700],
                         fontWeight: FontWeight.w600,
                       ),
-                      maxLines: 1, // Tambahkan ini juga untuk harga
-                      overflow: TextOverflow.ellipsis, //
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

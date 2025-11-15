@@ -35,4 +35,21 @@ class CanteenModel extends ChangeNotifier {
       notifyListeners(); // Beri tahu UI bahwa menu telah dihapus!
     }
   }
+
+  // U: Update Menu (TAMBAHKAN FUNGSI INI)
+  void updateMenuInCanteen(Canteen canteen, Menu oldMenu, Menu newMenu) {
+    // 1. Cari kantin
+    final canteenIndex = _canteens.indexWhere((c) => c.name == canteen.name);
+    if (canteenIndex == -1) return; // Kantin tidak ketemu
+
+    // 2. Cari menu yang lama di dalam kantin itu
+    final menuIndex = _canteens[canteenIndex].menus.indexWhere(
+            (m) => m.name == oldMenu.name && m.price == oldMenu.price
+    );
+    if (menuIndex == -1) return; // Menu lama tidak ketemu
+
+    // 3. Ganti menu lama dengan menu baru di index tersebut
+    _canteens[canteenIndex].menus[menuIndex] = newMenu;
+    notifyListeners(); // Beri tahu UI bahwa data telah berubah!
+  }
 }
