@@ -19,10 +19,5 @@ List<User> userList = [
     username: 'admin',
     password: '123',
     role: UserRole.admin,
-  ),
-  User(
-    username: 'mahasiswa',
-    password: '123',
-    role: UserRole.mahasiswa,
   )
 ];
