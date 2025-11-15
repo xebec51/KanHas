@@ -8,7 +8,6 @@ import 'package:kanhas/screens/add_menu_page.dart';
 import 'package:provider/provider.dart';
 
 class MenuPage extends StatefulWidget {
-  // Data 'canteen' ini hanya untuk inisialisasi awal
   final Canteen canteen;
   final User user;
   const MenuPage({super.key, required this.canteen, required this.user});
@@ -22,18 +21,14 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    // --- PERBAIKAN STATE (Masalah #2) ---
-    // 1. 'Tonton' CanteenModel. UI akan 'rebuild' jika model ini berubah.
+    // 1. "Tonton" CanteenModel agar UI 'rebuild' saat data berubah
     final canteenModel = context.watch<CanteenModel>();
 
-    // 2. Ambil data kantin yang 'segar' dari model,
-    //    alih-alih menggunakan 'widget.canteen' (data basi).
+    // 2. Ambil data kantin yang 'segar' dari model
     final Canteen currentCanteen = canteenModel.canteens.firstWhere(
           (c) => c.name == widget.canteen.name,
-      // (Pencadangan jika kantin tidak ditemukan, meski seharusnya tidak terjadi)
       orElse: () => widget.canteen,
     );
-    // ------------------------------------
 
     return Scaffold(
       appBar: AppBar(
@@ -80,14 +75,14 @@ class _MenuPageState extends State<MenuPage> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
 
-                // --- PERBAIKAN UI (Masalah #1) ---
+                // --- PERBAIKAN UTAMA (UI) ---
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  mainAxisExtent: 210, // 4. Terapkan TINGGI KAKU 210px
+                  crossAxisCount: 2, // 2 kolom
+                  crossAxisSpacing: 16, // Jarak horizontal
+                  mainAxisSpacing: 16, // Jarak vertikal
+                  mainAxisExtent: 210, // 4. PAKSA TINGGI KARTU JADI 210px
                 ),
-                // ---------------------------------
+                // -----------------------------
 
                 // 5. Gunakan data 'segar'
                 itemCount: currentCanteen.menus.length,
@@ -108,6 +103,7 @@ class _MenuPageState extends State<MenuPage> {
                           );
                         },
                       ),
+                      // Tombol Hapus Admin (Tidak berubah)
                       if (widget.user.role == UserRole.admin)
                         Positioned(
                           top: 0,
@@ -138,6 +134,7 @@ class _MenuPageState extends State<MenuPage> {
           ),
         ),
       ),
+      // Tombol FAB Admin (Tidak berubah)
       floatingActionButton: (widget.user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
@@ -193,7 +190,7 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  // 9. Perbarui 'signature' fungsi dialog
+  // Dialog Konfirmasi Hapus (Tidak berubah)
   void _showDeleteConfirmationDialog(
       BuildContext context, Canteen canteen, Menu menu) {
     showDialog(
@@ -283,6 +280,8 @@ class MenuCard extends StatelessWidget {
             ),
 
             // Area Teks
+            // 'Expanded' akan memaksa area ini mengisi
+            // sisa ruang yang ditinggalkan oleh gambar (210 - 120 = 90px)
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -296,10 +295,8 @@ class MenuCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
-                      // --- PERBAIKAN UI (Masalah #1) ---
-                      maxLines: 1, // 11. Paksa jadi satu baris
-                      overflow: TextOverflow.ellipsis, // 12. Potong teks "..."
-                      // ---------------------------------
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     // Harga Menu
@@ -310,6 +307,8 @@ class MenuCard extends StatelessWidget {
                         color: Colors.red[700],
                         fontWeight: FontWeight.w600,
                       ),
+                      maxLines: 1, // Tambahkan ini juga untuk harga
+                      overflow: TextOverflow.ellipsis, //
                     ),
                   ],
                 ),
