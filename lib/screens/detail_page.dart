@@ -49,13 +49,27 @@ class _DetailPageState extends State<DetailPage> {
               children: [
                 // [GAMBAR PLACEHOLDER]
                 // Sesuai referensi, gambar ada di atas
-                Container(
-                  height: 300, // Gambar lebih besar
+                Image.network(
+                  widget.menu.imageUrl,
+                  height: 300,
                   width: double.infinity,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.fastfood, size: 150, color: Colors.grey),
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      height: 300,
+                      color: Colors.grey[300],
+                      child: const Center(child: CircularProgressIndicator(color: Colors.red)),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 300,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.broken_image, size: 150, color: Colors.grey),
+                    );
+                  },
                 ),
-
                 // Area teks di bawah gambar
                 Padding(
                   padding: const EdgeInsets.all(20.0),

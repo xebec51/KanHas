@@ -95,11 +95,28 @@ class CanteenCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            Image.network(
+              canteen.imageUrl,
               height: 120,
               width: double.infinity,
-              color: Colors.grey[300],
-              child: const Icon(Icons.store, size: 80, color: Colors.grey),
+              fit: BoxFit.cover, // <-- Agar gambar memenuhi 'card'
+              // Efek 'loading' saat gambar diunduh
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child; // Gambar selesai
+                return Container( // Tampilkan placeholder abu-abu
+                  height: 120,
+                  color: Colors.grey[300],
+                  child: const Center(child: CircularProgressIndicator(color: Colors.red)),
+                );
+              },
+              // Efek jika gambar gagal di-load
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 120,
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                );
+              },
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),
