@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
-import 'package:kanhas/models/user_model.dart'; // Impor user model
+import 'package:kanhas/models/canteen_model.dart'; // Impor CanteenModel
+import 'package:kanhas/models/user_model.dart';
 import 'package:kanhas/screens/detail_page.dart';
 import 'package:kanhas/screens/cart_page.dart';
 import 'package:kanhas/screens/add_menu_page.dart';
 import 'package:provider/provider.dart';
 
-import '../models/canteen_model.dart'; // <-- TAMBAHKAN INI
-
-// Ubah jadi StatefulWidget
 class MenuPage extends StatefulWidget {
+  // Data 'canteen' ini hanya untuk inisialisasi awal
   final Canteen canteen;
-  final User user; // Terima objek User
+  final User user;
   const MenuPage({super.key, required this.canteen, required this.user});
 
   @override
@@ -23,9 +22,23 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
+    // --- PERBAIKAN STATE (Masalah #2) ---
+    // 1. 'Tonton' CanteenModel. UI akan 'rebuild' jika model ini berubah.
+    final canteenModel = context.watch<CanteenModel>();
+
+    // 2. Ambil data kantin yang 'segar' dari model,
+    //    alih-alih menggunakan 'widget.canteen' (data basi).
+    final Canteen currentCanteen = canteenModel.canteens.firstWhere(
+          (c) => c.name == widget.canteen.name,
+      // (Pencadangan jika kantin tidak ditemukan, meski seharusnya tidak terjadi)
+      orElse: () => widget.canteen,
+    );
+    // ------------------------------------
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.canteen.name),
+        // 3. Gunakan data 'segar'
+        title: Text(currentCanteen.name),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -34,7 +47,7 @@ class _MenuPageState extends State<MenuPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Bar
+              // Search Bar (Tidak berubah)
               TextField(
                 decoration: InputDecoration(
                   hintText: 'Cari menu...',
@@ -48,12 +61,10 @@ class _MenuPageState extends State<MenuPage> {
                 ),
                 onChanged: (value) {},
               ),
-
               const SizedBox(height: 20),
 
-              // Filter Chips
+              // Filter Chips (Tidak berubah)
               _buildFilterChips(),
-
               const SizedBox(height: 20),
 
               Text(
@@ -62,28 +73,30 @@ class _MenuPageState extends State<MenuPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 10),
 
-              // GridView untuk Menu
               // GridView untuk Menu
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+
+                // --- PERBAIKAN UI (Masalah #1) ---
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 0.8,
+                  mainAxisExtent: 210, // 4. Terapkan TINGGI KAKU 210px
                 ),
-                itemCount: widget.canteen.menus.length,
-                itemBuilder: (context, index) {
-                  final Menu menu = widget.canteen.menus[index];
+                // ---------------------------------
 
-                  // 1. GUNAKAN STACK UNTUK MENUMPUK TOMBOL HAPUS
+                // 5. Gunakan data 'segar'
+                itemCount: currentCanteen.menus.length,
+                itemBuilder: (context, index) {
+                  // 6. Gunakan data 'segar'
+                  final Menu menu = currentCanteen.menus[index];
+
                   return Stack(
                     children: [
-                      // --- Kartu Menu (seperti sebelumnya) ---
                       MenuCard(
                         menu: menu,
                         onTap: () {
@@ -95,8 +108,6 @@ class _MenuPageState extends State<MenuPage> {
                           );
                         },
                       ),
-
-                      // 2. TOMBOL HAPUS (HANYA UNTUK ADMIN)
                       if (widget.user.role == UserRole.admin)
                         Positioned(
                           top: 0,
@@ -113,8 +124,9 @@ class _MenuPageState extends State<MenuPage> {
                               ),
                             ),
                             onPressed: () {
-                              // 3. Panggil dialog konfirmasi
-                              _showDeleteConfirmationDialog(context, menu);
+                              // 7. Kirim data 'segar' ke dialog
+                              _showDeleteConfirmationDialog(
+                                  context, currentCanteen, menu);
                             },
                           ),
                         ),
@@ -126,19 +138,15 @@ class _MenuPageState extends State<MenuPage> {
           ),
         ),
       ),
-
-      // --- FITUR ADMIN ---
-      // Tampilkan tombol FAB HANYA jika role-nya admin
       floatingActionButton: (widget.user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
-          // Navigasi ke halaman form 'AddMenuPage'
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => AddMenuPage(
-                // 1. Kirim info kantin mana yang sedang dibuka
-                canteen: widget.canteen,
+                // 8. Kirim data 'segar' ke halaman tambah
+                canteen: currentCanteen,
               ),
             ),
           );
@@ -146,14 +154,13 @@ class _MenuPageState extends State<MenuPage> {
         backgroundColor: Colors.red,
         child: const Icon(Icons.add, color: Colors.white),
       )
-          : null, // Jika bukan admin, tidak ada tombol
+          : null,
     );
   }
 
-  // Widget helper untuk filter chips
+  // Widget helper filter chips (Tidak berubah)
   Widget _buildFilterChips() {
     final List<String> categories = ['All', 'Nasi', 'Minuman', 'Snack', 'Gorengan'];
-
     return SizedBox(
       height: 40,
       child: ListView.builder(
@@ -162,7 +169,6 @@ class _MenuPageState extends State<MenuPage> {
         itemBuilder: (context, index) {
           final category = categories[index];
           final bool isSelected = selectedCategory == category;
-
           return Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: FilterChip(
@@ -187,9 +193,9 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  // --- FUNGSI BARU UNTUK DIALOG KONFIRMASI HAPUS ---
-  void _showDeleteConfirmationDialog(BuildContext context, Menu menu) {
-    // Tampilkan dialog
+  // 9. Perbarui 'signature' fungsi dialog
+  void _showDeleteConfirmationDialog(
+      BuildContext context, Canteen canteen, Menu menu) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -197,26 +203,21 @@ class _MenuPageState extends State<MenuPage> {
           title: const Text('Hapus Menu'),
           content: Text('Apakah Anda yakin ingin menghapus ${menu.name}?'),
           actions: [
-            // Tombol Batal
             TextButton(
               child: const Text('Batal'),
               onPressed: () {
-                Navigator.of(dialogContext).pop(); // Tutup dialog
+                Navigator.of(dialogContext).pop();
               },
             ),
-            // Tombol Hapus
             TextButton(
               style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Hapus'),
               onPressed: () {
-                // Panggil fungsi hapus dari CanteenModel
+                // 10. Gunakan 'canteen' yang dikirim (data 'segar')
                 context
                     .read<CanteenModel>()
-                    .deleteMenuFromCanteen(widget.canteen, menu);
-
-                Navigator.of(dialogContext).pop(); // Tutup dialog
-
-                // Tampilkan notifikasi
+                    .deleteMenuFromCanteen(canteen, menu);
+                Navigator.of(dialogContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('${menu.name} telah dihapus.'),
@@ -232,7 +233,7 @@ class _MenuPageState extends State<MenuPage> {
   }
 }
 
-// Widget untuk Kartu Menu (Tetap sama)
+// Widget Kartu Menu
 class MenuCard extends StatelessWidget {
   final Menu menu;
   final VoidCallback onTap;
@@ -256,6 +257,7 @@ class MenuCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Gambar
             Image.network(
               menu.imageUrl,
               height: 120,
@@ -266,41 +268,51 @@ class MenuCard extends StatelessWidget {
                 return Container(
                   height: 120,
                   color: Colors.grey[300],
-                  child: const Center(child: CircularProgressIndicator(color: Colors.red)),
+                  child: const Center(
+                      child: CircularProgressIndicator(color: Colors.red)),
                 );
               },
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   height: 120,
                   color: Colors.grey[300],
-                  child: const Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                  child: const Icon(Icons.broken_image,
+                      size: 80, color: Colors.grey),
                 );
               },
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    menu.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+
+            // Area Teks
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Nama Menu
+                    Text(
+                      menu.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      // --- PERBAIKAN UI (Masalah #1) ---
+                      maxLines: 1, // 11. Paksa jadi satu baris
+                      overflow: TextOverflow.ellipsis, // 12. Potong teks "..."
+                      // ---------------------------------
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Rp ${menu.price}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.red[700],
-                      fontWeight: FontWeight.w600,
+                    const SizedBox(height: 4),
+                    // Harga Menu
+                    Text(
+                      'Rp ${menu.price}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.red[700],
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="506da239-08f5-4373-b17a-3b4002ec3dd0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/lib/models/canteen_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/canteen_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/menu_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/menu_page.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
