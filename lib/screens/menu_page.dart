@@ -23,17 +23,6 @@ class _MenuPageState extends State<MenuPage> {
       appBar: AppBar(
         title: Text(widget.canteen.name),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart_outlined),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CartPage()),
-              );
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Padding(

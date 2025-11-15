@@ -16,17 +16,6 @@ class HomePage extends StatelessWidget {
         // Tampilkan username dari objek user
         title: Text('Kanhas - (${user.username})'),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart_outlined),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CartPage()),
-              );
-            },
-          ),
-        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

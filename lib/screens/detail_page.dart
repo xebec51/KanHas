@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
-import 'package:kanhas/models/cart_model.dart'; // <-- TAMBAHKAN INI
+import 'package:provider/provider.dart'; // <-- TAMBAHKAN INI
+import 'package:kanhas/models/cart_model.dart';
 
 // Tetap StatefulWidget, tapi state-nya akan lebih kompleks
 class DetailPage extends StatefulWidget {
@@ -167,17 +168,19 @@ class _DetailPageState extends State<DetailPage> {
               ),
               child: ElevatedButton(
                 onPressed: () {
-                  // --- LOGIKA ADD TO CART ---
+                  // --- LOGIKA ADD TO CART BARU ---
                   // 1. Buat CartItem baru
                   final item = CartItem(
                     menu: widget.menu,
                     quantity: quantity, // Ambil state kuantitas
                   );
 
-                  // 2. Tambahkan ke daftar keranjang global
-                  cart.add(item);
+                  // 2. PANGGIL "OTAK" CartModel MENGGUNAKAN PROVIDER
+                  // 'listen: false' penting di sini, karena kita
+                  // hanya memanggil fungsi, bukan membangun ulang UI.
+                  Provider.of<CartModel>(context, listen: false).add(item);
 
-                  // 3. Tampilkan notifikasi
+                  // 3. Tampilkan notifikasi (Sama)
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('${item.menu.name} (x${item.quantity}) ditambahkan ke keranjang.'),
@@ -185,7 +188,7 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                   );
 
-                  // 4. Kembali ke halaman sebelumnya
+                  // 4. Kembali ke halaman sebelumnya (Sama)
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(

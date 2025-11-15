@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/user_model.dart';
-import 'package:kanhas/screens/home_page.dart';
+import 'package:kanhas/screens/main_page.dart'; // <-- GANTI TUJUAN
 import 'package:kanhas/screens/register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -58,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
         context,
         MaterialPageRoute(
           // Kirim seluruh objek user
-          builder: (context) => HomePage(user: foundUser!),
+          builder: (context) => MainPage(user: foundUser!),
         ),
       );
     }
