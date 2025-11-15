@@ -6,6 +6,7 @@ import 'package:kanhas/screens/cart_page.dart';
 // 1. Impor CanteenModel dan Provider
 import 'package:kanhas/models/canteen_model.dart';
 import 'package:provider/provider.dart';
+import 'package:kanhas/screens/add_canteen_page.dart'; // <-- TAMBAHKAN INI
 
 class HomePage extends StatelessWidget {
   final User user;
@@ -81,24 +82,10 @@ class HomePage extends StatelessWidget {
       floatingActionButton: (user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
-          // (Nanti kita akan navigasi ke halaman 'Add Canteen')
-          // Untuk sekarang, kita coba tambahkan 'dummy'
-
-          // Buat kantin dummy baru
-          final newCanteen = Canteen(
-            name: 'Kantin Baru #${canteenModel.canteens.length + 1}',
-            location: 'Lokasi Baru',
-            imageUrl: 'https://images.unsplash.com/photo-1579435661625-3c586116c483?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA3fDB8MXxzZWFyY2h8MTR8fGNhZmZlfGVufDB8fHx8MTY1ODMzNjQyMg&ixlib=rb-1.2.1&q=80&w=400',
-            menus: [],
-          );
-
-          // Panggil fungsi 'addCanteen' dari CanteenModel
-          // Kita gunakan 'read' (listen: false) karena kita di dalam 'onPressed'
-          // Cara baca: context.read<NamaModel>().namaFungsi()
-          context.read<CanteenModel>().addCanteen(newCanteen);
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${newCanteen.name} ditambahkan!')),
+          // Navigasi ke halaman form 'AddCanteenPage'
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddCanteenPage()),
           );
         },
         backgroundColor: Colors.red,

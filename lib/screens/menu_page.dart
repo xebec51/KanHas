@@ -3,6 +3,7 @@ import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/user_model.dart'; // Impor user model
 import 'package:kanhas/screens/detail_page.dart';
 import 'package:kanhas/screens/cart_page.dart';
+import 'package:kanhas/screens/add_menu_page.dart'; // <-- TAMBAHKAN INI
 
 // Ubah jadi StatefulWidget
 class MenuPage extends StatefulWidget {
@@ -98,9 +99,14 @@ class _MenuPageState extends State<MenuPage> {
       floatingActionButton: (widget.user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Fitur Tambah Menu untuk Admin!'),
+          // Navigasi ke halaman form 'AddMenuPage'
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddMenuPage(
+                // 1. Kirim info kantin mana yang sedang dibuka
+                canteen: widget.canteen,
+              ),
             ),
           );
         },
