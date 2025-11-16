@@ -6,7 +6,8 @@ import 'package:kanhas/screens/cart_page.dart';
 // 1. Impor CanteenModel dan Provider
 import 'package:kanhas/models/canteen_model.dart';
 import 'package:provider/provider.dart';
-import 'package:kanhas/screens/add_canteen_page.dart'; // <-- TAMBAHKAN INI
+import 'package:kanhas/screens/add_canteen_page.dart';
+import 'package:kanhas/screens/edit_canteen_page.dart';
 
 class HomePage extends StatelessWidget {
   final User user;
@@ -55,19 +56,57 @@ class HomePage extends StatelessWidget {
                   // 4. Ambil 1 kantin dari 'canteenModel'
                   final Canteen canteen = canteenModel.canteens[index];
 
-                  return CanteenCard(
-                    canteen: canteen,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MenuPage(
-                            canteen: canteen,
-                            user: user,
+                  // 5. BUNGKUS DENGAN STACK
+                  return Stack(
+                    children: [
+                      // --- Kartu Kantin (Anak #1) ---
+                      CanteenCard(
+                        canteen: canteen,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MenuPage(
+                                canteen: canteen,
+                                user: user,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      // --- Tombol Edit (Anak #2 - HANYA ADMIN) ---
+                      if (user.role == UserRole.admin)
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: IconButton(
+                            icon: const Icon(Icons.edit, size: 20),
+                            color: Colors.white,
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.blue.withOpacity(0.8),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              // Navigasi ke Halaman Edit Kantin
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditCanteenPage(
+                                    canteenToEdit: canteen,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
-                      );
-                    },
+
+                      // (Nanti kita akan tambahkan tombol Hapus di sini)
+                    ],
                   );
                 },
               ),

@@ -36,6 +36,19 @@ class CanteenModel extends ChangeNotifier {
     }
   }
 
+  // U: Update Canteen (TAMBAHKAN FUNGSI INI)
+  void updateCanteen(Canteen oldCanteen, Canteen newCanteen) {
+    // 1. Cari index kantin yang lama
+    final index = _canteens.indexWhere(
+            (c) => c.name == oldCanteen.name && c.location == oldCanteen.location);
+
+    // 2. Jika ketemu, ganti dengan yang baru
+    if (index != -1) {
+      _canteens[index] = newCanteen;
+      notifyListeners(); // Beri tahu UI (HomePage)
+    }
+  }
+
   // U: Update Menu (TAMBAHKAN FUNGSI INI)
   void updateMenuInCanteen(Canteen canteen, Menu oldMenu, Menu newMenu) {
     // 1. Cari kantin
