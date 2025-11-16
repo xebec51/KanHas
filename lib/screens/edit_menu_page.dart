@@ -1,10 +1,12 @@
+import 'dart:io'; // <-- Impor untuk 'File'
 import 'package:flutter/material.dart';
+import 'package:kanhas/helpers/image_helper.dart'; // <-- Impor helper kita
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/canteen_model.dart';
+import 'package:kanhas/widgets/local_or_network_image.dart'; // <-- Impor widget 'pintar'
 import 'package:provider/provider.dart';
 
 class EditMenuPage extends StatefulWidget {
-  // 1. Kita perlu tahu kantin & menu mana yang akan diedit
   final Canteen canteen;
   final Menu menuToEdit;
   const EditMenuPage({super.key, required this.canteen, required this.menuToEdit});
@@ -14,24 +16,26 @@ class EditMenuPage extends StatefulWidget {
 }
 
 class _EditMenuPageState extends State<EditMenuPage> {
-  // 2. Buat controller
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
   final _descController = TextEditingController();
-  final _imageUrlController = TextEditingController();
+
+  // HAPUS: _imageUrlController
+  // GANTI DENGAN: State untuk path file
+  String? _pickedImagePath;
 
   final _formKey = GlobalKey<FormState>();
 
-  // 3. INI BAGIAN PENTING: initState
-  // Kita isi controller dengan data menu yang 'lama'
-  // saat halaman pertama kali dibuka.
   @override
   void initState() {
     super.initState();
+    // Isi controller dengan data 'lama'
     _nameController.text = widget.menuToEdit.name;
     _priceController.text = widget.menuToEdit.price.toString();
     _descController.text = widget.menuToEdit.description;
-    _imageUrlController.text = widget.menuToEdit.imageUrl;
+
+    // Simpan path gambar yang lama ke state
+    _pickedImagePath = widget.menuToEdit.imageUrl;
   }
 
   @override
@@ -39,36 +43,41 @@ class _EditMenuPageState extends State<EditMenuPage> {
     _nameController.dispose();
     _priceController.dispose();
     _descController.dispose();
-    _imageUrlController.dispose();
     super.dispose();
   }
 
+  // --- FUNGSI BARU UNTUK MEMILIH GAMBAR ---
+  Future<void> _pickImage() async {
+    final String? imagePath = await ImageHelper.pickAndSaveImage();
+    if (imagePath != null) {
+      setState(() {
+        _pickedImagePath = imagePath;
+      });
+    }
+  }
+
   void _updateMenu() {
-    // 5. Validasi form
-    if (_formKey.currentState!.validate()) {
-      // 6. Buat objek Menu BARU dari input
+    // Validasi form
+    if (_formKey.currentState!.validate() && _pickedImagePath != null) {
+      // Buat objek Menu BARU
       final updatedMenu = Menu(
         name: _nameController.text,
         price: int.parse(_priceController.text),
         description: _descController.text,
-        imageUrl: _imageUrlController.text,
+        imageUrl: _pickedImagePath!, // <-- Simpan path (bisa lama atau baru)
       );
 
-      // 7. Panggil provider untuk 'update'
-      // (Kita akan buat fungsi ini di Aksi 2)
       context.read<CanteenModel>().updateMenuInCanteen(
         widget.canteen,
-        widget.menuToEdit, // Kirim menu lama
-        updatedMenu,        // Kirim menu baru
+        widget.menuToEdit,
+        updatedMenu,
       );
 
-      // 8. Tampilkan notifikasi
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${updatedMenu.name} berhasil diperbarui!')),
       );
 
-      // 9. Kembali ke halaman sebelumnya (MenuPage)
-      Navigator.pop(context);
+      Navigator.pop(context); // Kembali ke MenuPage
     }
   }
 
@@ -85,13 +94,13 @@ class _EditMenuPageState extends State<EditMenuPage> {
           child: ListView(
             children: [
               TextFormField(
-                controller: _nameController, // Sudah terisi otomatis
+                controller: _nameController,
                 decoration: const InputDecoration(
                   labelText: 'Nama Menu',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.fastfood),
                 ),
-                validator: (value) {
+                validator: (value) { /* ... (validator sama) ... */
                   if (value == null || value.isEmpty) {
                     return 'Nama menu tidak boleh kosong';
                   }
@@ -99,16 +108,15 @@ class _EditMenuPageState extends State<EditMenuPage> {
                 },
               ),
               const SizedBox(height: 16),
-
               TextFormField(
-                controller: _priceController, // Sudah terisi otomatis
+                controller: _priceController,
                 decoration: const InputDecoration(
                   labelText: 'Harga Menu',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.money),
                 ),
                 keyboardType: TextInputType.number,
-                validator: (value) {
+                validator: (value) { /* ... (validator sama) ... */
                   if (value == null || value.isEmpty) {
                     return 'Harga tidak boleh kosong';
                   }
@@ -119,16 +127,15 @@ class _EditMenuPageState extends State<EditMenuPage> {
                 },
               ),
               const SizedBox(height: 16),
-
               TextFormField(
-                controller: _descController, // Sudah terisi otomatis
+                controller: _descController,
                 decoration: const InputDecoration(
                   labelText: 'Deskripsi Menu',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.description),
                 ),
                 maxLines: 3,
-                validator: (value) {
+                validator: (value) { /* ... (validator sama) ... */
                   if (value == null || value.isEmpty) {
                     return 'Deskripsi tidak boleh kosong';
                   }
@@ -137,25 +144,44 @@ class _EditMenuPageState extends State<EditMenuPage> {
               ),
               const SizedBox(height: 16),
 
-              TextFormField(
-                controller: _imageUrlController, // Sudah terisi otomatis
-                decoration: const InputDecoration(
-                  labelText: 'URL Gambar Menu',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.image),
+              // --- UI BARU UNTUK IMAGE PICKER ---
+              const Text('Gambar Menu:', style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: _pickImage,
+                child: Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: _pickedImagePath == null
+                      ? const Column( /* ... (Tampilan 'pilih gambar') ... */
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add_a_photo, color: Colors.grey, size: 50),
+                      SizedBox(height: 8),
+                      Text('Ketuk untuk pilih gambar'),
+                    ],
+                  )
+                      : ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    // Tampilkan gambar yang ada
+                    child: LocalOrNetworkImage(
+                      imageUrl: _pickedImagePath!,
+                      height: 200,
+                      width: double.infinity,
+                      errorIcon: Icons.fastfood,
+                    ),
+                  ),
                 ),
-                keyboardType: TextInputType.url,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'URL Gambar tidak boleh kosong';
-                  }
-                  return null;
-                },
               ),
-              const SizedBox(height: 32),
+              // ------------------------------------
 
+              const SizedBox(height: 32),
               ElevatedButton(
-                onPressed: _updateMenu, // Panggil fungsi update
+                onPressed: _updateMenu,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
