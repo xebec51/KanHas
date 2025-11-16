@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:provider/provider.dart'; // <-- TAMBAHKAN INI
 import 'package:kanhas/models/cart_model.dart';
+import 'package:kanhas/widgets/local_or_network_image.dart';
 
 // Tetap StatefulWidget, tapi state-nya akan lebih kompleks
 class DetailPage extends StatefulWidget {
@@ -49,26 +50,11 @@ class _DetailPageState extends State<DetailPage> {
               children: [
                 // [GAMBAR PLACEHOLDER]
                 // Sesuai referensi, gambar ada di atas
-                Image.network(
-                  widget.menu.imageUrl,
+                LocalOrNetworkImage(
+                  imageUrl: widget.menu.imageUrl,
                   height: 300,
                   width: double.infinity,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      height: 300,
-                      color: Colors.grey[300],
-                      child: const Center(child: CircularProgressIndicator(color: Colors.red)),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 300,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.broken_image, size: 150, color: Colors.grey),
-                    );
-                  },
+                  errorIcon: Icons.fastfood,
                 ),
                 // Area teks di bawah gambar
                 Padding(
@@ -174,7 +160,7 @@ class _DetailPageState extends State<DetailPage> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withAlpha(26),
                     blurRadius: 10,
                     offset: const Offset(0, -5),
                   ),

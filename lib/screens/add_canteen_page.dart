@@ -1,56 +1,70 @@
+import 'dart:io'; // <-- Impor untuk 'File'
 import 'package:flutter/material.dart';
+import 'package:kanhas/helpers/image_helper.dart'; // <-- Impor helper kita
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/canteen_model.dart';
 import 'package:provider/provider.dart';
 
-// 1. Buat sebagai StatefulWidget
-// Kita perlu ini untuk mengelola state dari form (TextController)
+// --- NAMA CLASS HARUS 'AddCanteenPage' ---
 class AddCanteenPage extends StatefulWidget {
   const AddCanteenPage({super.key});
 
   @override
+  // --- NAMA STATE HARUS '_AddCanteenPageState' ---
   State<AddCanteenPage> createState() => _AddCanteenPageState();
 }
 
 class _AddCanteenPageState extends State<AddCanteenPage> {
-  // 2. Buat controller untuk setiap field
   final _nameController = TextEditingController();
   final _locationController = TextEditingController();
-  final _imageUrlController = TextEditingController();
 
-  // 3. Buat GlobalKey untuk Form
+  // State untuk menyimpan path file
+  String? _pickedImagePath;
+
   final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    // 4. Jangan lupa dispose controller
     _nameController.dispose();
     _locationController.dispose();
-    _imageUrlController.dispose();
     super.dispose();
   }
 
+  // Fungsi untuk memilih gambar
+  Future<void> _pickImage() async {
+    final String? imagePath = await ImageHelper.pickAndSaveImage();
+    if (imagePath != null) {
+      setState(() {
+        _pickedImagePath = imagePath;
+      });
+    }
+  }
+
   void _saveCanteen() {
-    // 5. Validasi form
-    if (_formKey.currentState!.validate()) {
-      // 6. Buat objek Canteen baru dari input
+    // Validasi form (termasuk cek gambar)
+    if (_formKey.currentState!.validate() && _pickedImagePath != null) {
       final newCanteen = Canteen(
         name: _nameController.text,
         location: _locationController.text,
-        imageUrl: _imageUrlController.text,
-        menus: [], // Kantin baru belum punya menu
+        imageUrl: _pickedImagePath!, // Simpan path file lokal
+        menus: [],
       );
 
-      // 7. Panggil provider untuk menambahkan kantin
       context.read<CanteenModel>().addCanteen(newCanteen);
 
-      // 8. Tampilkan notifikasi
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${newCanteen.name} berhasil ditambahkan!')),
       );
 
-      // 9. Kembali ke halaman sebelumnya (HomePage)
       Navigator.pop(context);
+    } else if (_pickedImagePath == null) {
+      // Tampilkan error jika gambar kosong
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Silakan pilih gambar kantin terlebih dahulu.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -62,12 +76,10 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        // 10. Bungkus dengan Form
         child: Form(
-          key: _formKey, // Hubungkan GlobalKey
-          child: ListView( // Pakai ListView agar bisa di-scroll
+          key: _formKey,
+          child: ListView(
             children: [
-              // 11. TextFormField untuk Nama
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -75,7 +87,6 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.store),
                 ),
-                // 12. Tambahkan validasi
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Nama kantin tidak boleh kosong';
@@ -84,8 +95,6 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
                 },
               ),
               const SizedBox(height: 16),
-
-              // 13. TextFormField untuk Lokasi
               TextFormField(
                 controller: _locationController,
                 decoration: const InputDecoration(
@@ -102,27 +111,44 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
               ),
               const SizedBox(height: 16),
 
-              // 14. TextFormField untuk URL Gambar
-              TextFormField(
-                controller: _imageUrlController,
-                decoration: const InputDecoration(
-                  labelText: 'URL Gambar Kantin',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.image),
+              // UI UNTUK IMAGE PICKER
+              const Text('Gambar Kantin:', style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: _pickImage, // Panggil fungsi pilih gambar
+                child: Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: _pickedImagePath == null
+                  // Tampilan jika gambar BELUM dipilih
+                      ? const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add_a_photo,
+                          color: Colors.grey, size: 50),
+                      SizedBox(height: 8),
+                      Text('Ketuk untuk pilih gambar'),
+                    ],
+                  )
+                  // Tampilan jika gambar SUDAH dipilih
+                      : ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      File(_pickedImagePath!),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-                keyboardType: TextInputType.url,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'URL Gambar tidak boleh kosong';
-                  }
-                  return null;
-                },
               ),
-              const SizedBox(height: 32),
+              // ------------------------------------
 
-              // 15. Tombol Simpan
+              const SizedBox(height: 32),
               ElevatedButton(
-                onPressed: _saveCanteen, // Panggil fungsi simpan
+                onPressed: _saveCanteen,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,

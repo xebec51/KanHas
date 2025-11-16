@@ -3,24 +3,23 @@ import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/canteen_model.dart';
 import 'package:provider/provider.dart';
 
+// --- NAMA CLASS HARUS 'EditCanteenPage' ---
 class EditCanteenPage extends StatefulWidget {
-  // 1. Kita perlu tahu kantin mana yang akan diedit
   final Canteen canteenToEdit;
   const EditCanteenPage({super.key, required this.canteenToEdit});
 
   @override
+  // --- NAMA STATE HARUS '_EditCanteenPageState' ---
   State<EditCanteenPage> createState() => _EditCanteenPageState();
 }
 
 class _EditCanteenPageState extends State<EditCanteenPage> {
-  // 2. Buat controller
   final _nameController = TextEditingController();
   final _locationController = TextEditingController();
-  final _imageUrlController = TextEditingController();
+  final _imageUrlController = TextEditingController(); // Masih pakai URL
 
   final _formKey = GlobalKey<FormState>();
 
-  // 3. Isi controller dengan data 'lama' saat halaman dibuka
   @override
   void initState() {
     super.initState();
@@ -39,26 +38,23 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
 
   void _updateCanteen() {
     if (_formKey.currentState!.validate()) {
-      // 4. Buat objek Canteen BARU dari input
       final updatedCanteen = Canteen(
         name: _nameController.text,
         location: _locationController.text,
         imageUrl: _imageUrlController.text,
-        menus: widget.canteenToEdit.menus, // Daftar menu tetap sama
+        menus: widget.canteenToEdit.menus,
       );
 
-      // 5. Panggil provider untuk 'update'
-      // (Kita akan buat fungsi ini di Aksi 2)
       context.read<CanteenModel>().updateCanteen(
-        widget.canteenToEdit, // Kirim kantin lama
-        updatedCanteen,       // Kirim kantin baru
+        widget.canteenToEdit,
+        updatedCanteen,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${updatedCanteen.name} berhasil diperbarui!')),
       );
 
-      Navigator.pop(context); // Kembali ke HomePage
+      Navigator.pop(context);
     }
   }
 
@@ -75,7 +71,7 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
           child: ListView(
             children: [
               TextFormField(
-                controller: _nameController, // Sudah terisi
+                controller: _nameController,
                 decoration: const InputDecoration(
                   labelText: 'Nama Kantin',
                   border: OutlineInputBorder(),
@@ -89,9 +85,8 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                 },
               ),
               const SizedBox(height: 16),
-
               TextFormField(
-                controller: _locationController, // Sudah terisi
+                controller: _locationController,
                 decoration: const InputDecoration(
                   labelText: 'Lokasi Kantin',
                   border: OutlineInputBorder(),
@@ -105,9 +100,8 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                 },
               ),
               const SizedBox(height: 16),
-
               TextFormField(
-                controller: _imageUrlController, // Sudah terisi
+                controller: _imageUrlController,
                 decoration: const InputDecoration(
                   labelText: 'URL Gambar Kantin',
                   border: OutlineInputBorder(),
@@ -122,9 +116,8 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                 },
               ),
               const SizedBox(height: 32),
-
               ElevatedButton(
-                onPressed: _updateCanteen, // Panggil fungsi update
+                onPressed: _updateCanteen,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,

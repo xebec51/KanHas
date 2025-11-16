@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:kanhas/models/cart_model.dart'; // Impor model keranjang kita
 import 'package:provider/provider.dart'; // 1. Impor Provider
 
@@ -108,7 +109,7 @@ class _CartPageState extends State<CartPage> {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withAlpha(26),
                         blurRadius: 10,
                         offset: const Offset(0, -5),
                       ),
@@ -147,7 +148,7 @@ class _CartPageState extends State<CartPage> {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () {
-                          print('Checkout dengan total Rp $totalPrice');
+                          debugPrint('Checkout dengan total Rp $totalPrice');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,

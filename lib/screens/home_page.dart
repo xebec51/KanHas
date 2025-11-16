@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/user_model.dart';
 import 'package:kanhas/screens/menu_page.dart';
-import 'package:kanhas/screens/cart_page.dart';
-// 1. Impor CanteenModel dan Provider
 import 'package:kanhas/models/canteen_model.dart';
 import 'package:provider/provider.dart';
 import 'package:kanhas/screens/add_canteen_page.dart';
 import 'package:kanhas/screens/edit_canteen_page.dart';
+import 'package:kanhas/widgets/local_or_network_image.dart';
 
 class HomePage extends StatelessWidget {
   final User user;
@@ -15,7 +14,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Tonton (watch) CanteenModel di sini
     final canteenModel = context.watch<CanteenModel>();
 
     return Scaffold(
@@ -40,14 +38,14 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 10),
             Expanded(
               child: GridView.builder(
-                // --- PERBAIKAN UI ---
+                // --- PERBAIKAN UI DI SINI ---
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
                   mainAxisExtent: 210, // 1. PAKSA TINGGI KARTU JADI 210px
                 ),
-                // ---------------------
+                // ---------------------------
                 itemCount: canteenModel.canteens.length,
                 itemBuilder: (context, index) {
                   final Canteen canteen = canteenModel.canteens[index];
@@ -69,8 +67,7 @@ class HomePage extends StatelessWidget {
                           );
                         },
                       ),
-
-                      // Tombol Hapus (Logika Anda sudah benar)
+                      // Tombol Hapus
                       if (user.role == UserRole.admin)
                         Positioned(
                           top: 0,
@@ -79,7 +76,7 @@ class HomePage extends StatelessWidget {
                             icon: const Icon(Icons.delete_forever_rounded, size: 20),
                             color: Colors.white,
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.red.withOpacity(0.8),
+                              backgroundColor: Colors.red.withAlpha(204),
                               shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(10),
@@ -129,8 +126,7 @@ class HomePage extends StatelessWidget {
                             },
                           ),
                         ),
-
-                      // Tombol Edit (Logika Anda sudah benar)
+                      // Tombol Edit
                       if (user.role == UserRole.admin)
                         Positioned(
                           top: 40,
@@ -139,7 +135,7 @@ class HomePage extends StatelessWidget {
                             icon: const Icon(Icons.edit, size: 20),
                             color: Colors.white,
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.blue.withOpacity(0.8),
+                              backgroundColor: Colors.blue.withAlpha(204),
                               shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(10),
@@ -166,13 +162,13 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      // Tombol FAB Admin (Logika Anda sudah benar)
+      // Tombol FAB Admin
       floatingActionButton: (user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddCanteenPage()),
+            MaterialPageRoute(builder: (context) => AddCanteenPage()),
           );
         },
         backgroundColor: Colors.red,
@@ -183,6 +179,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
+// Widget CanteenCard
 // Widget CanteenCard
 class CanteenCard extends StatelessWidget {
   final Canteen canteen;
@@ -207,33 +204,15 @@ class CanteenCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Gambar (Tidak berubah)
-            Image.network(
-              canteen.imageUrl,
+            // --- GANTI Image.network MENJADI INI ---
+            LocalOrNetworkImage(
+              imageUrl: canteen.imageUrl,
               height: 120,
               width: double.infinity,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Container(
-                  height: 120,
-                  color: Colors.grey[300],
-                  child: const Center(
-                      child: CircularProgressIndicator(color: Colors.red)),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 120,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.broken_image,
-                      size: 80, color: Colors.grey),
-                );
-              },
+              errorIcon: Icons.store, // Ikon error spesifik
             ),
+            // ------------------------------------
 
-            // --- PERBAIKAN UI ---
-            // 2. BUNGKUS 'Padding' DENGAN 'Expanded'
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -246,8 +225,8 @@ class CanteenCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
-                      maxLines: 1, // 3. Paksa 1 baris
-                      overflow: TextOverflow.ellipsis, // 4. Potong "..."
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -256,8 +235,8 @@ class CanteenCard extends StatelessWidget {
                         fontSize: 12,
                         color: Colors.grey[600],
                       ),
-                      maxLines: 1, // 5. Paksa 1 baris
-                      overflow: TextOverflow.ellipsis, // 6. Potong "..."
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),

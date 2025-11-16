@@ -3,10 +3,10 @@ import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/canteen_model.dart'; // Impor CanteenModel
 import 'package:kanhas/models/user_model.dart';
 import 'package:kanhas/screens/detail_page.dart';
-import 'package:kanhas/screens/cart_page.dart';
 import 'package:kanhas/screens/add_menu_page.dart';
 import 'package:provider/provider.dart';
 import 'package:kanhas/screens/edit_menu_page.dart'; // Impor Halaman Edit
+import 'package:kanhas/widgets/local_or_network_image.dart';
 
 class MenuPage extends StatefulWidget {
   final Canteen canteen;
@@ -106,7 +106,7 @@ class _MenuPageState extends State<MenuPage> {
                             icon: const Icon(Icons.delete_forever_rounded),
                             color: Colors.white,
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.red.withOpacity(0.8),
+                              backgroundColor: Colors.red.withAlpha(204),
                               shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(10),
@@ -129,7 +129,7 @@ class _MenuPageState extends State<MenuPage> {
                             icon: const Icon(Icons.edit, size: 20),
                             color: Colors.white,
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.blue.withOpacity(0.8), // Warna beda
+                              backgroundColor: Colors.blue.withAlpha(204), // Warna beda
                               shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(10),
@@ -254,6 +254,7 @@ class _MenuPageState extends State<MenuPage> {
 }
 
 // Widget Kartu Menu (Tidak berubah)
+// Widget Kartu Menu
 class MenuCard extends StatelessWidget {
   final Menu menu;
   final VoidCallback onTap;
@@ -277,29 +278,15 @@ class MenuCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              menu.imageUrl,
+            // --- GANTI Image.network MENJADI INI ---
+            LocalOrNetworkImage(
+              imageUrl: menu.imageUrl,
               height: 120,
               width: double.infinity,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Container(
-                  height: 120,
-                  color: Colors.grey[300],
-                  child: const Center(
-                      child: CircularProgressIndicator(color: Colors.red)),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 120,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.broken_image,
-                      size: 80, color: Colors.grey),
-                );
-              },
+              errorIcon: Icons.fastfood, // Ikon error spesifik
             ),
+            // ------------------------------------
+
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
