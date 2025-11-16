@@ -1,5 +1,3 @@
-// lib/screens/detail_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +5,6 @@ import 'package:kanhas/models/cart_model.dart';
 import 'package:kanhas/widgets/local_or_network_image.dart';
 
 class DetailPage extends StatefulWidget {
-  // ... (Constructor tidak berubah) ...
   final Menu menu;
   const DetailPage({super.key, required this.menu});
 
@@ -17,6 +14,8 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   int quantity = 1;
+  // State baru untuk tombol 'like'
+  bool isFavorite = false;
 
   void _incrementQuantity() {
     setState(() {
@@ -35,28 +34,41 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Kita tidak perlu AppBar, karena kita buat sendiri
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // --- INI PERUBAHANNYA ---
-                // Bungkus gambar dengan Hero
-                Hero(
-                  // Tag harus SAMA PERSIS dengan di MenuPage
-                  tag: widget.menu.name,
-                  child: LocalOrNetworkImage(
-                    imageUrl: widget.menu.imageUrl,
-                    height: 300,
-                    width: double.infinity,
-                    errorIcon: Icons.fastfood,
+          // KONTEN UTAMA YANG BISA DI-SCROLL
+          CustomScrollView(
+            slivers: [
+              // --- BAGIAN 1: GAMBAR HEADER (SLIVER) ---
+              SliverAppBar(
+                expandedHeight: 300.0, // Tinggi gambar saat diperluas
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                pinned: true, // Appbar akan tetap terlihat saat scroll ke atas
+                stretch: true, // Gambar akan 'stretch' jika ditarik
+                automaticallyImplyLeading: false, // Sembunyikan tombol back default
+                flexibleSpace: FlexibleSpaceBar(
+                  stretchModes: const [
+                    StretchMode.zoomBackground,
+                    StretchMode.fadeTitle,
+                  ],
+                  background: Hero(
+                    tag: widget.menu.name, // Tag Hero dari MenuPage
+                    child: LocalOrNetworkImage(
+                      imageUrl: widget.menu.imageUrl,
+                      width: double.infinity,
+                      height: 350, // Beri tinggi lebih
+                      fit: BoxFit.cover,
+                      errorIcon: Icons.fastfood,
+                    ),
                   ),
                 ),
-                // ------------------------------------
+              ),
 
-                // Area teks di bawah gambar
-                Padding(
+              // --- BAGIAN 2: KONTEN DETAIL ---
+              SliverToBoxAdapter(
+                child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,13 +89,15 @@ class _DetailPageState extends State<DetailPage> {
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[700],
+                          height: 1.5, // Beri jarak antar baris
                         ),
                         textAlign: TextAlign.justify,
                       ),
-
+                      const SizedBox(height: 20),
+                      const Divider(),
                       const SizedBox(height: 20),
 
-                      // Counter Kuantitas
+                      // Counter Kuantitas (Desain baru)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -100,8 +114,8 @@ class _DetailPageState extends State<DetailPage> {
                           // Tombol + dan -
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.red[100], // Ubah warna
+                              borderRadius: BorderRadius.circular(30),
                             ),
                             child: Row(
                               children: [
@@ -114,6 +128,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
+                                    color: Colors.red, // Ubah warna
                                   ),
                                 ),
                                 IconButton(
@@ -126,39 +141,35 @@ class _DetailPageState extends State<DetailPage> {
                         ],
                       ),
 
-                      // ... (Sisa kode placeholder tidak berubah) ...
-                      const SizedBox(height: 20),
-                      const Divider(),
-                      const SizedBox(height: 10),
-                      const Text('Add on', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      const Text('Nanti di sini ada pilihan Add on'),
-                      const SizedBox(height: 20),
-                      const Text('Special Instructions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                      const Text('Nanti di sini ada TextField untuk instruksi'),
-                      const SizedBox(height: 100),
+                      // Beri jarak aman di bawah agar tidak tertutup tombol
+                      const SizedBox(height: 120),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
 
-          // ... (Kode Tombol Add to Cart tidak berubah) ...
+          // --- BAGIAN 3: TOMBOL ADD TO CART (FLOATING) ---
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: Container(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(26),
-                    blurRadius: 10,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(20),
+                      blurRadius: 10,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  )
               ),
               child: ElevatedButton(
                 onPressed: () {
@@ -169,7 +180,8 @@ class _DetailPageState extends State<DetailPage> {
                   Provider.of<CartModel>(context, listen: false).add(item);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('${item.menu.name} (x${item.quantity}) ditambahkan ke keranjang.'),
+                      content: Text(
+                          '${item.menu.name} (x${item.quantity}) ditambahkan ke keranjang.'),
                       backgroundColor: Colors.green,
                     ),
                   );
@@ -180,27 +192,58 @@ class _DetailPageState extends State<DetailPage> {
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
                 child: const Text(
-                  'Add to cart',
+                  'Tambahkan ke Keranjang',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
           ),
 
-          // ... (Kode Tombol Back tidak berubah) ...
+          // --- BAGIAN 4: TOMBOL KEMBALI & SUKA (FLOATING) ---
           Positioned(
-            top: 40,
-            left: 10,
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.pop(context),
-              ),
+            top: 40, // Sesuaikan dengan status bar
+            left: 15,
+            right: 15,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Tombol Back
+                CircleAvatar(
+                  backgroundColor: Colors.white.withOpacity(0.9),
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+                // Tombol Like/Favorite
+                CircleAvatar(
+                  backgroundColor: Colors.white.withOpacity(0.9),
+                  child: IconButton(
+                    icon: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isFavorite = !isFavorite;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(isFavorite
+                              ? '${widget.menu.name} ditambahkan ke favorit'
+                              : '${widget.menu.name} dihapus dari favorit'),
+                          backgroundColor: Colors.red[400],
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ],
