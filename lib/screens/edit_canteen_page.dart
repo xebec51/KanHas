@@ -95,7 +95,7 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.store),
                 ),
-                validator: (value) { /* ... (validator sama) ... */
+                validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Nama kantin tidak boleh kosong';
                   }
@@ -110,7 +110,7 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.location_on),
                 ),
-                validator: (value) { /* ... (validator sama) ... */
+                validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Lokasi tidak boleh kosong';
                   }
@@ -132,7 +132,7 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: _pickedImagePath == null
-                      ? const Column( /* ... (Tampilan 'pilih gambar') ... */
+                      ? const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.add_a_photo, color: Colors.grey, size: 50),

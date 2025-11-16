@@ -100,7 +100,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.fastfood),
                 ),
-                validator: (value) { /* ... (validator sama) ... */
+                validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Nama menu tidak boleh kosong';
                   }
@@ -116,7 +116,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                   prefixIcon: Icon(Icons.money),
                 ),
                 keyboardType: TextInputType.number,
-                validator: (value) { /* ... (validator sama) ... */
+                validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Harga tidak boleh kosong';
                   }
@@ -135,7 +135,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                   prefixIcon: Icon(Icons.description),
                 ),
                 maxLines: 3,
-                validator: (value) { /* ... (validator sama) ... */
+                validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Deskripsi tidak boleh kosong';
                   }
@@ -157,7 +157,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: _pickedImagePath == null
-                      ? const Column( /* ... (Tampilan 'pilih gambar') ... */
+                      ? const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.add_a_photo, color: Colors.grey, size: 50),

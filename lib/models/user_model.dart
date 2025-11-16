@@ -7,8 +7,16 @@ class User {
   final String username;
   final String password;
   final UserRole role;
+  final String fullName;
+  final String email;
 
-  User({required this.username, required this.password, required this.role});
+  User({
+    required this.username,
+    required this.password,
+    required this.role,
+    this.fullName = 'Nama Lengkap',
+    this.email = 'email@contoh.com',
+  });
 }
 
 // 3. BUAT DATABASE USER (Global List)

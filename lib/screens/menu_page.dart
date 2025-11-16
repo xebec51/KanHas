@@ -28,6 +28,18 @@ class _MenuPageState extends State<MenuPage> {
       orElse: () => widget.canteen,
     );
 
+    // --- LOGIKA FILTER PINDAH KE SINI ---
+    final List<Menu> filteredMenus;
+    if (selectedCategory == 'All') {
+      filteredMenus = currentCanteen.menus;
+    } else {
+      filteredMenus = currentCanteen.menus.where((menu) {
+        // Ini contoh sederhana, bisa disesuaikan
+        return menu.name.toLowerCase().contains(selectedCategory.toLowerCase());
+      }).toList();
+    }
+    // --- AKHIR BLOK LOGIKA ---
+
     return Scaffold(
       appBar: AppBar(
         title: Text(currentCanteen.name),
@@ -67,6 +79,8 @@ class _MenuPageState extends State<MenuPage> {
               ),
               const SizedBox(height: 10),
 
+              // BLOK LOGIKA DIHAPUS DARI SINI
+
               // GridView untuk Menu
               GridView.builder(
                 shrinkWrap: true,
@@ -77,9 +91,9 @@ class _MenuPageState extends State<MenuPage> {
                   mainAxisSpacing: 16,
                   mainAxisExtent: 210, // Tinggi Kartu Kaku
                 ),
-                itemCount: currentCanteen.menus.length,
+                itemCount: filteredMenus.length, // <-- Sudah benar
                 itemBuilder: (context, index) {
-                  final Menu menu = currentCanteen.menus[index];
+                  final Menu menu = filteredMenus[index]; // <-- Sudah benar
 
                   // --- PERBAIKAN DI DALAM STACK ---
                   return Stack(
