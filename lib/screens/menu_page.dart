@@ -331,7 +331,6 @@ class _MenuPageState extends State<MenuPage> {
   }
 }
 
-// Widget Kartu Menu (Tidak berubah)
 // Widget Kartu Menu
 class MenuCard extends StatelessWidget {
   final Menu menu;
@@ -356,12 +355,17 @@ class MenuCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- GANTI Image.network MENJADI INI ---
-            LocalOrNetworkImage(
-              imageUrl: menu.imageUrl,
-              height: 120,
-              width: double.infinity,
-              errorIcon: Icons.fastfood, // Ikon error spesifik
+            // --- INI PERUBAHANNYA ---
+            // Bungkus gambar dengan Hero
+            Hero(
+              // Tag harus unik untuk setiap item
+              tag: menu.name,
+              child: LocalOrNetworkImage(
+                imageUrl: menu.imageUrl,
+                height: 120,
+                width: double.infinity,
+                errorIcon: Icons.fastfood,
+              ),
             ),
             // ------------------------------------
 

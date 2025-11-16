@@ -1,11 +1,13 @@
+// lib/screens/detail_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
-import 'package:provider/provider.dart'; // <-- TAMBAHKAN INI
+import 'package:provider/provider.dart';
 import 'package:kanhas/models/cart_model.dart';
 import 'package:kanhas/widgets/local_or_network_image.dart';
 
-// Tetap StatefulWidget, tapi state-nya akan lebih kompleks
 class DetailPage extends StatefulWidget {
+  // ... (Constructor tidak berubah) ...
   final Menu menu;
   const DetailPage({super.key, required this.menu});
 
@@ -14,22 +16,16 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  // 1. BUAT STATE UNTUK KUANTITAS
-  // Ini adalah data yang akan berubah, menggantikan 'isFavorite'
   int quantity = 1;
 
-  // 2. FUNGSI UNTUK MENAMBAH KUANTITAS
   void _incrementQuantity() {
-    // Panggil setState untuk memperbarui UI
     setState(() {
       quantity++;
     });
   }
 
-  // 3. FUNGSI UNTUK MENGURANGI KUANTITAS
   void _decrementQuantity() {
     setState(() {
-      // Tambahkan logika agar kuantitas tidak bisa kurang dari 1
       if (quantity > 1) {
         quantity--;
       }
@@ -38,24 +34,27 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Kita gunakan Stack untuk menumpuk tombol 'Add to cart'
-    // di atas konten utama
     return Scaffold(
       body: Stack(
         children: [
-          // 4. KONTEN UTAMA YANG BISA DI-SCROLL
           SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // [GAMBAR PLACEHOLDER]
-                // Sesuai referensi, gambar ada di atas
-                LocalOrNetworkImage(
-                  imageUrl: widget.menu.imageUrl,
-                  height: 300,
-                  width: double.infinity,
-                  errorIcon: Icons.fastfood,
+                // --- INI PERUBAHANNYA ---
+                // Bungkus gambar dengan Hero
+                Hero(
+                  // Tag harus SAMA PERSIS dengan di MenuPage
+                  tag: widget.menu.name,
+                  child: LocalOrNetworkImage(
+                    imageUrl: widget.menu.imageUrl,
+                    height: 300,
+                    width: double.infinity,
+                    errorIcon: Icons.fastfood,
+                  ),
                 ),
+                // ------------------------------------
+
                 // Area teks di bawah gambar
                 Padding(
                   padding: const EdgeInsets.all(20.0),
@@ -64,7 +63,7 @@ class _DetailPageState extends State<DetailPage> {
                     children: [
                       // Nama Menu
                       Text(
-                        widget.menu.name, // Ambil dari widget
+                        widget.menu.name,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 28,
@@ -84,13 +83,13 @@ class _DetailPageState extends State<DetailPage> {
 
                       const SizedBox(height: 20),
 
-                      // 5. COUNTER KUANTITAS
+                      // Counter Kuantitas
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Harga
                           Text(
-                            'Rp ${widget.menu.price * quantity}', // Harga dikali kuantitas
+                            'Rp ${widget.menu.price * quantity}',
                             style: TextStyle(
                               fontSize: 24,
                               color: Colors.red[700],
@@ -106,20 +105,17 @@ class _DetailPageState extends State<DetailPage> {
                             ),
                             child: Row(
                               children: [
-                                // Tombol Kurang (-)
                                 IconButton(
                                   icon: const Icon(Icons.remove, color: Colors.red),
                                   onPressed: _decrementQuantity,
                                 ),
-                                // Teks Kuantitas
                                 Text(
-                                  '$quantity', // Tampilkan state kuantitas
+                                  '$quantity',
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                // Tombol Tambah (+)
                                 IconButton(
                                   icon: const Icon(Icons.add, color: Colors.red),
                                   onPressed: _incrementQuantity,
@@ -130,7 +126,7 @@ class _DetailPageState extends State<DetailPage> {
                         ],
                       ),
 
-                      // Placeholder untuk Add on & Special Instructions
+                      // ... (Sisa kode placeholder tidak berubah) ...
                       const SizedBox(height: 20),
                       const Divider(),
                       const SizedBox(height: 10),
@@ -139,8 +135,6 @@ class _DetailPageState extends State<DetailPage> {
                       const SizedBox(height: 20),
                       const Text('Special Instructions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       const Text('Nanti di sini ada TextField untuk instruksi'),
-
-                      // Beri jarak aman di bawah agar tidak tertutup tombol
                       const SizedBox(height: 100),
                     ],
                   ),
@@ -149,7 +143,7 @@ class _DetailPageState extends State<DetailPage> {
             ),
           ),
 
-          // 6. TOMBOL "ADD TO CART" (Mengambang di bawah)
+          // ... (Kode Tombol Add to Cart tidak berubah) ...
           Positioned(
             bottom: 0,
             left: 0,
@@ -168,32 +162,22 @@ class _DetailPageState extends State<DetailPage> {
               ),
               child: ElevatedButton(
                 onPressed: () {
-                  // --- LOGIKA ADD TO CART BARU ---
-                  // 1. Buat CartItem baru
                   final item = CartItem(
                     menu: widget.menu,
-                    quantity: quantity, // Ambil state kuantitas
+                    quantity: quantity,
                   );
-
-                  // 2. PANGGIL "OTAK" CartModel MENGGUNAKAN PROVIDER
-                  // 'listen: false' penting di sini, karena kita
-                  // hanya memanggil fungsi, bukan membangun ulang UI.
                   Provider.of<CartModel>(context, listen: false).add(item);
-
-                  // 3. Tampilkan notifikasi (Sama)
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('${item.menu.name} (x${item.quantity}) ditambahkan ke keranjang.'),
                       backgroundColor: Colors.green,
                     ),
                   );
-
-                  // 4. Kembali ke halaman sebelumnya (Sama)
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Warna tombol
-                  foregroundColor: Colors.white, // Warna teks
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -207,7 +191,7 @@ class _DetailPageState extends State<DetailPage> {
             ),
           ),
 
-          // 7. TOMBOL BACK (Mengambang di atas)
+          // ... (Kode Tombol Back tidak berubah) ...
           Positioned(
             top: 40,
             left: 10,
