@@ -1,31 +1,25 @@
-// 1. Definisikan Role
-// Menggunakan 'enum' jauh lebih aman & bersih daripada string
-enum UserRole { mahasiswa, admin }
+// lib/models/user_model.dart
 
-// 2. Buat "Cetakan" User
+enum UserRole { admin, mahasiswa }
+
 class User {
   final String username;
   final String password;
   final UserRole role;
-  final String fullName;
-  final String email;
+  // TODO: Tambahkan field lain seperti nama lengkap, email, dll jika perlu
+  // final String fullName;
+  // final String email;
 
   User({
     required this.username,
     required this.password,
     required this.role,
-    this.fullName = 'Nama Lengkap',
-    this.email = 'email@contoh.com',
   });
 }
 
-// 3. BUAT DATABASE USER (Global List)
-// Ini adalah "tabel" user kita.
-// Kita akan tambahkan satu admin default
+// Data dummy pengguna
+// Global agar bisa diakses oleh EditProfilePage
 List<User> userList = [
-  User(
-    username: 'admin',
-    password: '123',
-    role: UserRole.admin,
-  )
+  User(username: 'admin', password: 'admin123', role: UserRole.admin), // Password diubah
+  User(username: 'mahasiswa', password: 'siswa123', role: UserRole.mahasiswa), // Password diubah
 ];

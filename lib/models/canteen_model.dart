@@ -1,8 +1,11 @@
+// lib/models/canteen_model.dart
+
 import 'package:flutter/foundation.dart';
 import 'package:kanhas/models/canteen_data.dart';
 
 class CanteenModel extends ChangeNotifier {
-  final List<Canteen> _canteens = List.from(canteenList);
+  // --- PERBAIKI BARIS INI ---
+  final List<Canteen> _canteens = List.from(initialCanteens); // <-- Ganti 'canteenList'
 
   List<Canteen> get canteens => _canteens;
 
@@ -44,8 +47,7 @@ class CanteenModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // --- FUNGSI YANG HILANG ---
-  // U: Update Canteen (TAMBAHKAN FUNGSI INI)
+  // U: Update Canteen
   void updateCanteen(Canteen oldCanteen, Canteen newCanteen) {
     final index = _canteens.indexWhere(
             (c) => c.name == oldCanteen.name && c.location == oldCanteen.location);
@@ -55,7 +57,7 @@ class CanteenModel extends ChangeNotifier {
     }
   }
 
-  // D: Delete Canteen (TAMBAHKAN FUNGSI INI)
+  // D: Delete Canteen
   void deleteCanteen(Canteen canteen) {
     _canteens.removeWhere(
             (c) => c.name == canteen.name && c.location == canteen.location);
