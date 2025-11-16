@@ -8,17 +8,59 @@ import 'package:kanhas/screens/add_canteen_page.dart';
 import 'package:kanhas/screens/edit_canteen_page.dart';
 import 'package:kanhas/widgets/local_or_network_image.dart';
 
-class HomePage extends StatelessWidget {
+// --- UBAH MENJADI StatefulWidget ---
+class HomePage extends StatefulWidget {
   final User user;
   const HomePage({super.key, required this.user});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  // --- TAMBAHKAN STATE UNTUK SEARCH ---
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // Tambahkan listener untuk memperbarui UI saat mengetik
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+  // ---------------------------------
 
   @override
   Widget build(BuildContext context) {
     final canteenModel = context.watch<CanteenModel>();
 
+    // --- TAMBAHKAN LOGIKA FILTER ---
+    final List<Canteen> filteredCanteens;
+    if (_searchQuery.isEmpty) {
+      // Jika tidak ada query, tampilkan semua
+      filteredCanteens = canteenModel.canteens;
+    } else {
+      // Jika ada query, filter berdasarkan nama kantin
+      filteredCanteens = canteenModel.canteens.where((canteen) {
+        return canteen.name.toLowerCase().contains(_searchQuery);
+      }).toList();
+    }
+    // -----------------------------
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kanhas - (${user.username})'),
+        // --- Gunakan widget.user ---
+        title: Text('Kanhas - (${widget.user.username})'),
         centerTitle: true,
       ),
       body: Padding(
@@ -26,10 +68,30 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Selamat datang, ${user.username}!',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            // --- GANTI Text MENJADI TextField ---
+            TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Cari kantin...',
+                prefixIcon: const Icon(Icons.search),
+                // Tambahkan tombol clear (X)
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                  },
+                )
+                    : null,
+                filled: true,
+                fillColor: Colors.grey[200],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  borderSide: BorderSide.none,
+                ),
+              ),
             ),
+            // ----------------------------------
             const SizedBox(height: 20),
             Text(
               'Silakan pilih kantin:',
@@ -37,20 +99,39 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: GridView.builder(
-                // --- PERBAIKAN UI DI SINI ---
+              // --- TAMBAHKAN PENANGANAN HASIL KOSONG ---
+              child: filteredCanteens.isEmpty
+                  ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.store_mall_directory_outlined, size: 60, color: Colors.grey[400]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Kantin tidak ditemukan',
+                      style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                    ),
+                    Text(
+                      'Coba kata kunci lain.',
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              )
+              // ---------------------------------------
+                  : GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  mainAxisExtent: 210, // 1. PAKSA TINGGI KARTU JADI 210px
+                  mainAxisExtent: 210,
                 ),
-                // ---------------------------
-                itemCount: canteenModel.canteens.length,
+                // --- GUNAKAN LIST YANG SUDAH DIFILTER ---
+                itemCount: filteredCanteens.length,
                 itemBuilder: (context, index) {
-                  final Canteen canteen = canteenModel.canteens[index];
+                  final Canteen canteen = filteredCanteens[index];
+                  // ------------------------------------
 
-                  // Stack untuk tombol Admin (Logika Anda sudah benar)
                   return Stack(
                     children: [
                       CanteenCard(
@@ -61,14 +142,15 @@ class HomePage extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => MenuPage(
                                 canteen: canteen,
-                                user: user,
+                                // --- Gunakan widget.user ---
+                                user: widget.user,
                               ),
                             ),
                           );
                         },
                       ),
-                      // Tombol Hapus
-                      if (user.role == UserRole.admin)
+                      // --- Gunakan widget.user ---
+                      if (widget.user.role == UserRole.admin)
                         Positioned(
                           top: 0,
                           right: 0,
@@ -126,8 +208,8 @@ class HomePage extends StatelessWidget {
                             },
                           ),
                         ),
-                      // Tombol Edit
-                      if (user.role == UserRole.admin)
+                      // --- Gunakan widget.user ---
+                      if (widget.user.role == UserRole.admin)
                         Positioned(
                           top: 40,
                           right: 0,
@@ -163,12 +245,13 @@ class HomePage extends StatelessWidget {
         ),
       ),
       // Tombol FAB Admin
-      floatingActionButton: (user.role == UserRole.admin)
+      // --- Gunakan widget.user ---
+      floatingActionButton: (widget.user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddCanteenPage()),
+            MaterialPageRoute(builder: (context) => const AddCanteenPage()),
           );
         },
         backgroundColor: Colors.red,
@@ -179,8 +262,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// Widget CanteenCard
-// Widget CanteenCard
+// Widget CanteenCard (Tidak berubah)
 class CanteenCard extends StatelessWidget {
   final Canteen canteen;
   final VoidCallback onTap;
@@ -204,15 +286,12 @@ class CanteenCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- GANTI Image.network MENJADI INI ---
             LocalOrNetworkImage(
               imageUrl: canteen.imageUrl,
               height: 120,
               width: double.infinity,
-              errorIcon: Icons.store, // Ikon error spesifik
+              errorIcon: Icons.store,
             ),
-            // ------------------------------------
-
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
