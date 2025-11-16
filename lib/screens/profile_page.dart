@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kanhas/models/user_model.dart';
 import 'package:kanhas/screens/login_page.dart';
 import 'package:kanhas/screens/edit_profile_page.dart';
-// --- TAMBAHKAN IMPOR INI ---
 import 'package:kanhas/screens/order_history_page.dart';
+// --- TAMBAHKAN IMPOR INI ---
+import 'package:kanhas/screens/settings_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  // ... (kode User tidak berubah) ...
   final User user;
   const ProfilePage({super.key, required this.user});
 
@@ -75,7 +75,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-
   Widget _buildProfileMenu(BuildContext context) {
     return Container(
       color: Colors.white,
@@ -97,23 +96,26 @@ class ProfilePage extends StatelessWidget {
             icon: Icons.history,
             title: 'Riwayat Pesanan',
             onTap: () {
-              // --- UBAH LOGIKA INI ---
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const OrderHistoryPage(),
                 ),
               );
-              // -----------------------
             },
           ),
           _buildMenuTile(
             icon: Icons.settings_outlined,
             title: 'Pengaturan',
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fitur belum tersedia')),
+              // --- UBAH LOGIKA INI ---
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SettingsPage(),
+                ),
               );
+              // -----------------------
             },
           ),
           _buildMenuTile(
