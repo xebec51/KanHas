@@ -1,53 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/user_model.dart';
-import 'package:kanhas/screens/login_page.dart'; // Impor LoginPage
-// --- TAMBAHKAN IMPOR INI ---
+import 'package:kanhas/screens/login_page.dart';
 import 'package:kanhas/screens/edit_profile_page.dart';
+// --- TAMBAHKAN IMPOR INI ---
+import 'package:kanhas/screens/order_history_page.dart';
 
 class ProfilePage extends StatelessWidget {
+  // ... (kode User tidak berubah) ...
   final User user;
   const ProfilePage({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
+    // ... (kode build tidak berubah) ...
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil Saya'),
         centerTitle: true,
-        // Hilangkan bayangan di AppBar
         elevation: 0,
         backgroundColor: Colors.grey[50],
       ),
-      // Gunakan background yang sama agar menyatu dengan AppBar
       backgroundColor: Colors.grey[50],
       body: ListView(
         children: [
-          // === BAGIAN 1: PROFILE HEADER ===
           _buildProfileHeader(context),
-
           const SizedBox(height: 20),
-
-          // === BAGIAN 2: MENU UTAMA ===
           _buildProfileMenu(context),
-
           const SizedBox(height: 30),
-
-          // === BAGIAN 3: DANGER ZONE (LOGOUT) ===
           _buildLogoutButton(context),
         ],
       ),
     );
   }
 
-  // WIDGET HELPER UNTUK HEADER
+  // ... (kode _buildProfileHeader tidak berubah) ...
   Widget _buildProfileHeader(BuildContext context) {
-    // ... (Tidak ada perubahan di sini) ...
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        // Border di bawah
         border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
       ),
       child: Column(
@@ -63,7 +55,7 @@ class ProfilePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            user.username, // Ambil dari user model
+            user.username,
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -71,7 +63,7 @@ class ProfilePage extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Role: ${user.role.name}', // 'mahasiswa' atau 'admin'
+            'Role: ${user.role.name}',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -83,41 +75,42 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // WIDGET HELPER UNTUK MENU
+
   Widget _buildProfileMenu(BuildContext context) {
     return Container(
       color: Colors.white,
       child: Column(
         children: [
           _buildMenuTile(
-            icon: Icons.lock_outline, // <-- Ganti ikon
-            title: 'Ubah Password', // <-- Ganti judul
+            icon: Icons.lock_outline,
+            title: 'Ubah Password',
             onTap: () {
-              // --- UBAH LOGIKA INI ---
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => EditProfilePage(user: user),
                 ),
               );
-              // -----------------------
             },
           ),
           _buildMenuTile(
             icon: Icons.history,
             title: 'Riwayat Pesanan',
             onTap: () {
-              // TODO: Buat Halaman Riwayat Pesanan
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fitur belum tersedia')),
+              // --- UBAH LOGIKA INI ---
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const OrderHistoryPage(),
+                ),
               );
+              // -----------------------
             },
           ),
           _buildMenuTile(
             icon: Icons.settings_outlined,
             title: 'Pengaturan',
             onTap: () {
-              // TODO: Buat Halaman Pengaturan
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Fitur belum tersedia')),
               );
@@ -127,21 +120,19 @@ class ProfilePage extends StatelessWidget {
             icon: Icons.info_outline,
             title: 'Tentang Aplikasi',
             onTap: () {
-              // TODO: Tampilkan dialog 'About'
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Aplikasi Kanhas v1.0.0')),
               );
             },
-            hideDivider: true, // Sembunyikan divider di item terakhir
+            hideDivider: true,
           ),
         ],
       ),
     );
   }
 
-  // WIDGET HELPER UNTUK LISTTILE KUSTOM
+  // ... (kode _buildMenuTile tidak berubah) ...
   Widget _buildMenuTile({
-    // ... (Tidak ada perubahan di sini) ...
     required IconData icon,
     required String title,
     required VoidCallback onTap,
@@ -176,9 +167,8 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // WIDGET HELPER UNTUK TOMBOL LOGOUT
+  // ... (kode _buildLogoutButton tidak berubah) ...
   Widget _buildLogoutButton(BuildContext context) {
-    // ... (Tidak ada perubahan di sini) ...
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: TextButton.icon(
@@ -195,11 +185,10 @@ class ProfilePage extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          // Logout dan kembali ke LoginPage
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const LoginPage()),
-                (route) => false, // Hapus semua halaman sebelumnya
+                (route) => false,
           );
         },
       ),
