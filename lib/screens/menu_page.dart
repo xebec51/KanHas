@@ -20,6 +20,31 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   String selectedCategory = 'All';
 
+  // --- TAMBAHKAN INI ---
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+  // --------------------
+
+  // --- TAMBAHKAN initState ---
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.toLowerCase();
+      });
+    });
+  }
+  // -------------------------
+
+  // --- TAMBAHKAN dispose ---
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+  // -----------------------
+
   @override
   Widget build(BuildContext context) {
     final canteenModel = context.watch<CanteenModel>();
@@ -28,14 +53,21 @@ class _MenuPageState extends State<MenuPage> {
       orElse: () => widget.canteen,
     );
 
-    // --- LOGIKA FILTER PINDAH KE SINI ---
-    final List<Menu> filteredMenus;
+    // --- LOGIKA FILTER SEKARANG DIPERBARUI ---
+    // 1. Filter berdasarkan Kategori
+    List<Menu> filteredMenus;
     if (selectedCategory == 'All') {
       filteredMenus = currentCanteen.menus;
     } else {
       filteredMenus = currentCanteen.menus.where((menu) {
-        // Ini contoh sederhana, bisa disesuaikan
         return menu.name.toLowerCase().contains(selectedCategory.toLowerCase());
+      }).toList();
+    }
+
+    // 2. Filter (hasil dari no 1) berdasarkan Pencarian
+    if (_searchQuery.isNotEmpty) {
+      filteredMenus = filteredMenus.where((menu) {
+        return menu.name.toLowerCase().contains(_searchQuery);
       }).toList();
     }
     // --- AKHIR BLOK LOGIKA ---
@@ -53,9 +85,20 @@ class _MenuPageState extends State<MenuPage> {
             children: [
               // Search Bar
               TextField(
+                // --- MODIFIKASI INI ---
+                controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Cari menu...',
                   prefixIcon: const Icon(Icons.search),
+                  // Tambahkan tombol clear
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                  )
+                      : null,
                   filled: true,
                   fillColor: Colors.grey[200],
                   border: OutlineInputBorder(
@@ -63,7 +106,8 @@ class _MenuPageState extends State<MenuPage> {
                     borderSide: BorderSide.none,
                   ),
                 ),
-                onChanged: (value) {},
+                // onChanged dihapus, karena kita pakai listener
+                // -----------------------
               ),
               const SizedBox(height: 20),
 
@@ -79,96 +123,116 @@ class _MenuPageState extends State<MenuPage> {
               ),
               const SizedBox(height: 10),
 
-              // BLOK LOGIKA DIHAPUS DARI SINI
-
-              // GridView untuk Menu
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  mainAxisExtent: 210, // Tinggi Kartu Kaku
-                ),
-                itemCount: filteredMenus.length, // <-- Sudah benar
-                itemBuilder: (context, index) {
-                  final Menu menu = filteredMenus[index]; // <-- Sudah benar
-
-                  // --- PERBAIKAN DI DALAM STACK ---
-                  return Stack(
+              // --- TAMBAHKAN INI JIKA HASIL KOSONG ---
+              if (filteredMenus.isEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 50),
+                  alignment: Alignment.center,
+                  child: Column(
                     children: [
-                      // Anak #1: Kartu Menu
-                      MenuCard(
-                        menu: menu,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => DetailPage(menu: menu),
-                            ),
-                          );
-                        },
+                      Icon(Icons.search_off, size: 60, color: Colors.grey[400]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Menu tidak ditemukan',
+                        style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                       ),
+                      Text(
+                        'Coba kata kunci atau filter lain.',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                )
+              else
+              // -----------------------------------
+              // GridView untuk Menu
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    mainAxisExtent: 210, // Tinggi Kartu Kaku
+                  ),
+                  itemCount: filteredMenus.length,
+                  itemBuilder: (context, index) {
+                    final Menu menu = filteredMenus[index];
 
-                      // Anak #2: Tombol Hapus (Hanya Admin)
-                      if (widget.user.role == UserRole.admin)
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: IconButton(
-                            icon: const Icon(Icons.delete_forever_rounded),
-                            color: Colors.white,
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.red.withAlpha(204),
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                ),
+                    // --- Stack tidak berubah ---
+                    return Stack(
+                      children: [
+                        // Anak #1: Kartu Menu
+                        MenuCard(
+                          menu: menu,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailPage(menu: menu),
                               ),
-                            ),
-                            onPressed: () {
-                              _showDeleteConfirmationDialog(
-                                  context, currentCanteen, menu);
-                            },
-                          ),
+                            );
+                          },
                         ),
 
-                      // Anak #3: Tombol Edit (Hanya Admin)
-                      if (widget.user.role == UserRole.admin)
-                        Positioned(
-                          top: 40, // Posisikan di bawah tombol hapus
-                          right: 0,
-                          child: IconButton(
-                            icon: const Icon(Icons.edit, size: 20),
-                            color: Colors.white,
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.blue.withAlpha(204), // Warna beda
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              // Navigasi ke Halaman Edit
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditMenuPage(
-                                    canteen: currentCanteen,
-                                    menuToEdit: menu,
+                        // Anak #2: Tombol Hapus (Hanya Admin)
+                        if (widget.user.role == UserRole.admin)
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: IconButton(
+                              icon: const Icon(Icons.delete_forever_rounded),
+                              color: Colors.white,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.red.withAlpha(204),
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
                                   ),
                                 ),
-                              );
-                            },
+                              ),
+                              onPressed: () {
+                                _showDeleteConfirmationDialog(
+                                    context, currentCanteen, menu);
+                              },
+                            ),
                           ),
-                        ),
-                    ],
-                  );
-                  // --- AKHIR PERBAIKAN STACK ---
-                },
-              ),
+
+                        // Anak #3: Tombol Edit (Hanya Admin)
+                        if (widget.user.role == UserRole.admin)
+                          Positioned(
+                            top: 40, // Posisikan di bawah tombol hapus
+                            right: 0,
+                            child: IconButton(
+                              icon: const Icon(Icons.edit, size: 20),
+                              color: Colors.white,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.blue.withAlpha(204), // Warna beda
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                // Navigasi ke Halaman Edit
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditMenuPage(
+                                      canteen: currentCanteen,
+                                      menuToEdit: menu,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                      ],
+                    );
+                    // --- AKHIR PERBAIKAN STACK ---
+                  },
+                ),
             ],
           ),
         ),
