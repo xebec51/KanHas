@@ -15,10 +15,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 2. Tonton (watch) CanteenModel di sini
-    // Kita panggil di dalam 'build' agar UI-nya 'rebuild'
-    // setiap kali ada kantin baru ditambahkan.
-    // Kita gunakan context.watch<NamaModel>()
+    // Tonton (watch) CanteenModel di sini
     final canteenModel = context.watch<CanteenModel>();
 
     return Scaffold(
@@ -41,25 +38,23 @@ class HomePage extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 10),
-
             Expanded(
               child: GridView.builder(
+                // --- PERBAIKAN UI ---
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 16,
                   mainAxisSpacing: 16,
-                  childAspectRatio: 0.8,
+                  mainAxisExtent: 210, // 1. PAKSA TINGGI KARTU JADI 210px
                 ),
-                // 3. Ambil 'itemCount' dari 'canteenModel'
+                // ---------------------
                 itemCount: canteenModel.canteens.length,
                 itemBuilder: (context, index) {
-                  // 4. Ambil 1 kantin dari 'canteenModel'
                   final Canteen canteen = canteenModel.canteens[index];
 
-                  // 5. BUNGKUS DENGAN STACK
+                  // Stack untuk tombol Admin (Logika Anda sudah benar)
                   return Stack(
                     children: [
-                      // --- Kartu Kantin (Anak #1) ---
                       CanteenCard(
                         canteen: canteen,
                         onTap: () {
@@ -75,10 +70,70 @@ class HomePage extends StatelessWidget {
                         },
                       ),
 
-                      // --- Tombol Edit (Anak #2 - HANYA ADMIN) ---
+                      // Tombol Hapus (Logika Anda sudah benar)
                       if (user.role == UserRole.admin)
                         Positioned(
                           top: 0,
+                          right: 0,
+                          child: IconButton(
+                            icon: const Icon(Icons.delete_forever_rounded, size: 20),
+                            color: Colors.white,
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.red.withOpacity(0.8),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext dialogContext) {
+                                  return AlertDialog(
+                                    title: const Text('Hapus Kantin'),
+                                    content: Text(
+                                      'Apakah Anda yakin ingin menghapus ${canteen.name}? '
+                                          'Semua menu di dalamnya juga akan terhapus.',
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text('Batal'),
+                                        onPressed: () {
+                                          Navigator.of(dialogContext).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        style: TextButton.styleFrom(
+                                            foregroundColor: Colors.red),
+                                        child: const Text('Hapus'),
+                                        onPressed: () {
+                                          context
+                                              .read<CanteenModel>()
+                                              .deleteCanteen(canteen);
+                                          Navigator.of(dialogContext).pop();
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  '${canteen.name} telah dihapus.'),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+
+                      // Tombol Edit (Logika Anda sudah benar)
+                      if (user.role == UserRole.admin)
+                        Positioned(
+                          top: 40,
                           right: 0,
                           child: IconButton(
                             icon: const Icon(Icons.edit, size: 20),
@@ -92,7 +147,6 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              // Navigasi ke Halaman Edit Kantin
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -104,8 +158,6 @@ class HomePage extends StatelessWidget {
                             },
                           ),
                         ),
-
-                      // (Nanti kita akan tambahkan tombol Hapus di sini)
                     ],
                   );
                 },
@@ -114,14 +166,10 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-
-      // 5. FITUR ADMIN "TAMBAH KANTIN"
-      // Kita gunakan 'FloatingActionButton' yang sama
-      // seperti di 'MenuPage'
+      // Tombol FAB Admin (Logika Anda sudah benar)
       floatingActionButton: (user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
-          // Navigasi ke halaman form 'AddCanteenPage'
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddCanteenPage()),
@@ -130,12 +178,12 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.red,
         child: const Icon(Icons.add_business, color: Colors.white),
       )
-          : null, // Jika bukan mahasiswa, tidak ada tombol
+          : null,
     );
   }
 }
 
-// CanteenCard (Tetap sama, tidak perlu diubah)
+// Widget CanteenCard
 class CanteenCard extends StatelessWidget {
   final Canteen canteen;
   final VoidCallback onTap;
@@ -159,6 +207,7 @@ class CanteenCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Gambar (Tidak berubah)
             Image.network(
               canteen.imageUrl,
               height: 120,
@@ -177,36 +226,41 @@ class CanteenCard extends StatelessWidget {
                 return Container(
                   height: 120,
                   color: Colors.grey[300],
-                  child:
-                  const Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                  child: const Icon(Icons.broken_image,
+                      size: 80, color: Colors.grey),
                 );
               },
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    canteen.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+
+            // --- PERBAIKAN UI ---
+            // 2. BUNGKUS 'Padding' DENGAN 'Expanded'
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      canteen.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                      maxLines: 1, // 3. Paksa 1 baris
+                      overflow: TextOverflow.ellipsis, // 4. Potong "..."
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    canteen.location,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[600],
+                    const SizedBox(height: 4),
+                    Text(
+                      canteen.location,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                      maxLines: 1, // 5. Paksa 1 baris
+                      overflow: TextOverflow.ellipsis, // 6. Potong "..."
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

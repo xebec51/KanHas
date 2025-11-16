@@ -65,4 +65,13 @@ class CanteenModel extends ChangeNotifier {
     _canteens[canteenIndex].menus[menuIndex] = newMenu;
     notifyListeners(); // Beri tahu UI bahwa data telah berubah!
   }
+
+  // D: Delete Canteen (TAMBAHKAN FUNGSI INI)
+  void deleteCanteen(Canteen canteen) {
+    // 1. Hapus kantin dari daftar
+    _canteens.removeWhere(
+            (c) => c.name == canteen.name && c.location == canteen.location);
+
+    notifyListeners(); // Beri tahu UI (HomePage)
+  }
 }
