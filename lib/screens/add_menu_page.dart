@@ -4,7 +4,6 @@ import 'package:kanhas/models/canteen_model.dart';
 import 'package:provider/provider.dart';
 
 class AddMenuPage extends StatefulWidget {
-  // 1. Kita perlu tahu kantin mana yang akan ditambah menunya
   final Canteen canteen;
   const AddMenuPage({super.key, required this.canteen});
 
@@ -13,7 +12,6 @@ class AddMenuPage extends StatefulWidget {
 }
 
 class _AddMenuPageState extends State<AddMenuPage> {
-  // 2. Buat controller untuk setiap field
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
   final _descController = TextEditingController();
@@ -31,26 +29,20 @@ class _AddMenuPageState extends State<AddMenuPage> {
   }
 
   void _saveMenu() {
-    // 3. Validasi form
     if (_formKey.currentState!.validate()) {
-      // 4. Buat objek Menu baru dari input
       final newMenu = Menu(
         name: _nameController.text,
-        price: int.parse(_priceController.text), // Ubah teks harga ke angka
+        price: int.parse(_priceController.text), // Ubah input teks ke angka.
         description: _descController.text,
         imageUrl: _imageUrlController.text,
       );
 
-      // 5. Panggil provider untuk menambahkan menu
-      // (Kita akan buat fungsi ini di Aksi 2)
       context.read<CanteenModel>().addMenuToCanteen(widget.canteen, newMenu);
 
-      // 6. Tampilkan notifikasi
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${newMenu.name} berhasil ditambahkan!')),
       );
 
-      // 7. Kembali ke halaman sebelumnya (MenuPage)
       Navigator.pop(context);
     }
   }
@@ -59,7 +51,6 @@ class _AddMenuPageState extends State<AddMenuPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Tampilkan nama kantin di judul
         title: Text('Tambah Menu di ${widget.canteen.name}'),
       ),
       body: Padding(
@@ -91,7 +82,7 @@ class _AddMenuPageState extends State<AddMenuPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.money),
                 ),
-                keyboardType: TextInputType.number, // Keyboard angka
+                keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Harga tidak boleh kosong';
@@ -111,7 +102,7 @@ class _AddMenuPageState extends State<AddMenuPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.description),
                 ),
-                maxLines: 3, // Bikin field lebih besar
+                maxLines: 3,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Deskripsi tidak boleh kosong';

@@ -29,12 +29,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _savePassword() {
-    // 1. Validasi semua form
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    // 2. Cek apakah password lama sudah benar
     if (_oldPasswordController.text != widget.user.password) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -45,7 +43,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
 
-    // 3. Cek apakah password baru & konfirmasi sudah cocok
     if (_newPasswordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -56,14 +53,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
 
-    // --- SEMUA VALIDASI LOLOS ---
-
-    // 4. Cari index user di userList global
     int userIndex =
     userList.indexWhere((u) => u.username == widget.user.username);
 
     if (userIndex == -1) {
-      // Seharusnya tidak akan terjadi, tapi untuk keamanan
+      // Seharusnya tidak akan terjadi, tapi untuk keamanan.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Gagal menemukan user. Silakan login ulang.'),
@@ -73,18 +67,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
 
-    // 5. Buat objek User baru dengan password baru
-    // (Karena field di class User bersifat 'final', kita harus buat objek baru)
+    // Karena field di class User bersifat 'final', kita harus buat objek baru.
     final updatedUser = User(
       username: widget.user.username,
-      password: _newPasswordController.text, // Password baru
+      password: _newPasswordController.text,
       role: widget.user.role,
     );
 
-    // 6. Ganti user lama di list dengan user yang sudah di-update
     userList[userIndex] = updatedUser;
 
-    // 7. Tampilkan notifikasi sukses
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Password berhasil diperbarui! Silakan login kembali.'),
@@ -92,11 +83,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
       ),
     );
 
-    // 8. Paksa user kembali ke halaman Login
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LoginPage()),
-          (route) => false, // Hapus semua halaman sebelumnya
+          (route) => false, // Hapus semua halaman sebelumnya.
     );
   }
 
@@ -158,7 +148,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   if (value == null || value.isEmpty) {
                     return 'Password baru tidak boleh kosong';
                   }
-                  if (value.length < 3) { // Samakan dengan logic login
+                  if (value.length < 3) { // Samakan dengan logic login.
                     return 'Password minimal 3 karakter';
                   }
                   return null;

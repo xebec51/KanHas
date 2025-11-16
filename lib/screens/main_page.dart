@@ -13,28 +13,21 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  // 1. State untuk melacak tab mana yang aktif
   int _selectedIndex = 0;
 
-  // 2. Daftar halaman (tab) yang akan ditampilkan
-  // Kita 'late' (tunda) inisialisasi agar bisa mengakses 'widget.user'
+  // `late` digunakan agar bisa mengakses 'widget.user' saat inisialisasi.
   late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
-    // Inisialisasi daftar halaman di sini
     _pages = [
-      // Tab 0: Home
       HomePage(user: widget.user),
-      // Tab 1: Cart
       const CartPage(),
-      // Tab 2: Profile
       ProfilePage(user: widget.user),
     ];
   }
 
-  // 3. Fungsi untuk mengubah tab
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -44,22 +37,17 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // 4. Tampilkan halaman yang sesuai dengan state '_selectedIndex'
-      // Kita gunakan IndexedStack agar state setiap halaman (posisi scroll, dll)
-      // tetap terjaga saat berpindah tab.
+      // IndexedStack digunakan agar state setiap halaman tetap terjaga saat berpindah tab.
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
       ),
 
-      // 5. Definisikan BottomNavigationBar
       bottomNavigationBar: BottomNavigationBar(
-        // Tampilan
         backgroundColor: Colors.white,
-        selectedItemColor: Colors.red, // Warna ikon yang aktif
-        unselectedItemColor: Colors.grey, // Warna ikon yang tidak aktif
+        selectedItemColor: Colors.red,
+        unselectedItemColor: Colors.grey,
 
-        // Fungsionalitas
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -74,8 +62,8 @@ class _MainPageState extends State<MainPage> {
             label: 'Profil',
           ),
         ],
-        currentIndex: _selectedIndex, // Beri tahu Navbar tab mana yang aktif
-        onTap: _onItemTapped, // Panggil fungsi ini saat tab di-klik
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }

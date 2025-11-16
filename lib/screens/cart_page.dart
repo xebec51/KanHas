@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter/foundation.dart'; // <-- Hapus ini (Warning dari task sebelumnya)
 import 'package:kanhas/models/cart_model.dart';
 import 'package:provider/provider.dart';
-// --- TAMBAHKAN IMPOR INI ---
 import 'package:kanhas/screens/order_history_page.dart';
 
 import '../widgets/local_or_network_image.dart';
@@ -21,7 +19,6 @@ class _CartPageState extends State<CartPage> {
       builder: (context, cart, child) {
         double totalPrice = cart.totalPrice;
 
-        // --- TAMBAHKAN UI UNTUK KERANJANG KOSONG ---
         if (cart.items.isEmpty) {
           return Scaffold(
             appBar: AppBar(
@@ -49,9 +46,7 @@ class _CartPageState extends State<CartPage> {
             ),
           );
         }
-        // -------------------------------------------
 
-        // Jika keranjang tidak kosong, tampilkan seperti biasa
         return Scaffold(
           appBar: AppBar(
             title: const Text('Keranjang Saya'),
@@ -59,10 +54,9 @@ class _CartPageState extends State<CartPage> {
           ),
           body: Stack(
             children: [
-              // 1. DAFTAR ITEM (Bisa di-scroll)
               ListView.builder(
                 padding: const EdgeInsets.only(bottom: 200),
-                itemCount: cart.items.length, // <-- Ganti ke cart.items.length
+                itemCount: cart.items.length,
                 itemBuilder: (context, index) {
                   final cartItem = cart.items[index];
 
@@ -71,7 +65,6 @@ class _CartPageState extends State<CartPage> {
                         horizontal: 16.0, vertical: 8.0),
                     child: Row(
                       children: [
-                        // --- GANTI TAMPILAN GAMBAR ---
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: LocalOrNetworkImage(
@@ -82,7 +75,6 @@ class _CartPageState extends State<CartPage> {
                             errorIcon: Icons.fastfood,
                           ),
                         ),
-                        // -----------------------------
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(
@@ -125,8 +117,6 @@ class _CartPageState extends State<CartPage> {
                   );
                 },
               ),
-
-              // 2. RINGKASAN & PEMBAYARAN
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -145,7 +135,6 @@ class _CartPageState extends State<CartPage> {
                   ),
                   child: Column(
                     children: [
-                      // ... (Payment method tidak berubah) ...
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -165,14 +154,10 @@ class _CartPageState extends State<CartPage> {
                         ],
                       ),
                       const SizedBox(height: 20),
-
-                      // --- UBAH LOGIKA 'onPressed' INI ---
                       ElevatedButton(
                         onPressed: () {
-                          // 1. Panggil fungsi clear()
                           context.read<CartModel>().clear();
 
-                          // 2. Tampilkan notifikasi sukses
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Checkout berhasil! Pesanan Anda sedang diproses.'),
@@ -180,7 +165,6 @@ class _CartPageState extends State<CartPage> {
                             ),
                           );
 
-                          // 3. Navigasi ke Halaman Riwayat
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -188,7 +172,6 @@ class _CartPageState extends State<CartPage> {
                             ),
                           );
                         },
-                        // ... (style tidak berubah) ...
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
@@ -203,7 +186,6 @@ class _CartPageState extends State<CartPage> {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      // ---------------------------------
                     ],
                   ),
                 ),

@@ -1,9 +1,9 @@
-import 'dart:io'; // <-- Impor untuk 'File'
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:kanhas/helpers/image_helper.dart'; // <-- Impor helper kita
+import 'package:kanhas/helpers/image_helper.dart';
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/canteen_model.dart';
-import 'package:kanhas/widgets/local_or_network_image.dart'; // <-- Impor widget 'pintar'
+import 'package:kanhas/widgets/local_or_network_image.dart';
 import 'package:provider/provider.dart';
 
 class EditCanteenPage extends StatefulWidget {
@@ -18,8 +18,6 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
   final _nameController = TextEditingController();
   final _locationController = TextEditingController();
 
-  // HAPUS: _imageUrlController
-  // GANTI DENGAN: State untuk menyimpan path file
   String? _pickedImagePath;
 
   final _formKey = GlobalKey<FormState>();
@@ -27,11 +25,9 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
   @override
   void initState() {
     super.initState();
-    // Isi controller dengan data 'lama'
     _nameController.text = widget.canteenToEdit.name;
     _locationController.text = widget.canteenToEdit.location;
 
-    // Simpan path gambar yang lama ke state
     _pickedImagePath = widget.canteenToEdit.imageUrl;
   }
 
@@ -42,7 +38,6 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
     super.dispose();
   }
 
-  // --- FUNGSI BARU UNTUK MEMILIH GAMBAR ---
   Future<void> _pickImage() async {
     final String? imagePath = await ImageHelper.pickAndSaveImage();
     if (imagePath != null) {
@@ -53,13 +48,12 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
   }
 
   void _updateCanteen() {
-    // Validasi form (gambar tidak wajib di-update)
+    // Gambar tidak wajib di-update saat mengedit.
     if (_formKey.currentState!.validate() && _pickedImagePath != null) {
-      // Buat objek Canteen BARU
       final updatedCanteen = Canteen(
         name: _nameController.text,
         location: _locationController.text,
-        imageUrl: _pickedImagePath!, // <-- Simpan path (bisa lama atau baru)
+        imageUrl: _pickedImagePath!, // Simpan path gambar yang baru atau yang lama.
         menus: widget.canteenToEdit.menus,
       );
 
@@ -72,7 +66,7 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
         SnackBar(content: Text('${updatedCanteen.name} berhasil diperbarui!')),
       );
 
-      Navigator.pop(context); // Kembali ke HomePage
+      Navigator.pop(context);
     }
   }
 
@@ -119,11 +113,10 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
               ),
               const SizedBox(height: 16),
 
-              // --- UI BARU UNTUK IMAGE PICKER ---
               const Text('Gambar Kantin:', style: TextStyle(fontSize: 16)),
               const SizedBox(height: 8),
               InkWell(
-                onTap: _pickImage, // Panggil fungsi pilih gambar
+                onTap: _pickImage,
                 child: Container(
                   height: 200,
                   width: double.infinity,
@@ -141,19 +134,16 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                     ],
                   )
                       : ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    // Gunakan widget 'pintar' kita untuk menampilkan
-                    // gambar yang ada (lokal atau web)
-                    child: LocalOrNetworkImage(
-                      imageUrl: _pickedImagePath!,
-                      height: 200,
-                      width: double.infinity,
-                      errorIcon: Icons.store,
-                    ),
-                  ),
+                          borderRadius: BorderRadius.circular(10),
+                          child: LocalOrNetworkImage(
+                            imageUrl: _pickedImagePath!,
+                            height: 200,
+                            width: double.infinity,
+                            errorIcon: Icons.store,
+                          ),
+                        ),
                 ),
               ),
-              // ------------------------------------
 
               const SizedBox(height: 32),
               ElevatedButton(

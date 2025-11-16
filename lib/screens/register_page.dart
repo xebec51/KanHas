@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kanhas/models/user_model.dart'; // Impor model user kita
+import 'package:kanhas/models/user_model.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -16,7 +16,6 @@ class _RegisterPageState extends State<RegisterPage> {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-    // Cek jika username sudah ada
     bool userExists = userList.any((user) => user.username == username);
 
     if (userExists) {
@@ -27,24 +26,21 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       );
     } else {
-      // Tambah user baru ke list
       userList.add(
         User(
           username: username,
           password: password,
-          role: UserRole.mahasiswa, // <-- Hanya bisa daftar sebagai MAHASISWA
+          role: UserRole.mahasiswa, // Hanya bisa daftar sebagai MAHASISWA.
         ),
       );
 
-      // Tampilkan sukses dan kembali ke Login
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          // --- INI PERBAIKANNYA ---
-          backgroundColor: Colors.green, // Pakai titik (.), bukan titik dua (:)
+          backgroundColor: Colors.green,
           content: Text('Registrasi berhasil! Silakan login.'),
         ),
       );
-      Navigator.pop(context); // Kembali ke LoginPage
+      Navigator.pop(context);
     }
   }
 
@@ -59,7 +55,6 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Tombol Back manual
                 IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: () => Navigator.pop(context),
@@ -75,7 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 Text(
-                  'Daftar sebagai Mahasiswa', // Tambahkan sub-judul
+                  'Daftar sebagai Mahasiswa',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey[600],

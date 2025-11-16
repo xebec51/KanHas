@@ -1,9 +1,9 @@
-import 'dart:io'; // <-- Impor untuk 'File'
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:kanhas/helpers/image_helper.dart'; // <-- Impor helper kita
+import 'package:kanhas/helpers/image_helper.dart';
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/canteen_model.dart';
-import 'package:kanhas/widgets/local_or_network_image.dart'; // <-- Impor widget 'pintar'
+import 'package:kanhas/widgets/local_or_network_image.dart';
 import 'package:provider/provider.dart';
 
 class EditMenuPage extends StatefulWidget {
@@ -20,8 +20,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
   final _priceController = TextEditingController();
   final _descController = TextEditingController();
 
-  // HAPUS: _imageUrlController
-  // GANTI DENGAN: State untuk path file
   String? _pickedImagePath;
 
   final _formKey = GlobalKey<FormState>();
@@ -29,12 +27,10 @@ class _EditMenuPageState extends State<EditMenuPage> {
   @override
   void initState() {
     super.initState();
-    // Isi controller dengan data 'lama'
     _nameController.text = widget.menuToEdit.name;
     _priceController.text = widget.menuToEdit.price.toString();
     _descController.text = widget.menuToEdit.description;
 
-    // Simpan path gambar yang lama ke state
     _pickedImagePath = widget.menuToEdit.imageUrl;
   }
 
@@ -46,7 +42,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
     super.dispose();
   }
 
-  // --- FUNGSI BARU UNTUK MEMILIH GAMBAR ---
   Future<void> _pickImage() async {
     final String? imagePath = await ImageHelper.pickAndSaveImage();
     if (imagePath != null) {
@@ -57,14 +52,12 @@ class _EditMenuPageState extends State<EditMenuPage> {
   }
 
   void _updateMenu() {
-    // Validasi form
     if (_formKey.currentState!.validate() && _pickedImagePath != null) {
-      // Buat objek Menu BARU
       final updatedMenu = Menu(
         name: _nameController.text,
         price: int.parse(_priceController.text),
         description: _descController.text,
-        imageUrl: _pickedImagePath!, // <-- Simpan path (bisa lama atau baru)
+        imageUrl: _pickedImagePath!, // Simpan path gambar yang baru atau yang lama.
       );
 
       context.read<CanteenModel>().updateMenuInCanteen(
@@ -77,7 +70,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
         SnackBar(content: Text('${updatedMenu.name} berhasil diperbarui!')),
       );
 
-      Navigator.pop(context); // Kembali ke MenuPage
+      Navigator.pop(context);
     }
   }
 
@@ -144,7 +137,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
               ),
               const SizedBox(height: 16),
 
-              // --- UI BARU UNTUK IMAGE PICKER ---
               const Text('Gambar Menu:', style: TextStyle(fontSize: 16)),
               const SizedBox(height: 8),
               InkWell(
@@ -166,18 +158,16 @@ class _EditMenuPageState extends State<EditMenuPage> {
                     ],
                   )
                       : ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    // Tampilkan gambar yang ada
-                    child: LocalOrNetworkImage(
-                      imageUrl: _pickedImagePath!,
-                      height: 200,
-                      width: double.infinity,
-                      errorIcon: Icons.fastfood,
-                    ),
-                  ),
+                          borderRadius: BorderRadius.circular(10),
+                          child: LocalOrNetworkImage(
+                            imageUrl: _pickedImagePath!,
+                            height: 200,
+                            width: double.infinity,
+                            errorIcon: Icons.fastfood,
+                          ),
+                        ),
                 ),
               ),
-              // ------------------------------------
 
               const SizedBox(height: 32),
               ElevatedButton(

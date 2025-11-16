@@ -8,7 +8,6 @@ import 'package:kanhas/screens/add_canteen_page.dart';
 import 'package:kanhas/screens/edit_canteen_page.dart';
 import 'package:kanhas/widgets/local_or_network_image.dart';
 
-// --- UBAH MENJADI StatefulWidget ---
 class HomePage extends StatefulWidget {
   final User user;
   const HomePage({super.key, required this.user});
@@ -18,14 +17,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // --- TAMBAHKAN STATE UNTUK SEARCH ---
   final _searchController = TextEditingController();
   String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
-    // Tambahkan listener untuk memperbarui UI saat mengetik
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text.toLowerCase();
@@ -38,28 +35,22 @@ class _HomePageState extends State<HomePage> {
     _searchController.dispose();
     super.dispose();
   }
-  // ---------------------------------
 
   @override
   Widget build(BuildContext context) {
     final canteenModel = context.watch<CanteenModel>();
 
-    // --- TAMBAHKAN LOGIKA FILTER ---
     final List<Canteen> filteredCanteens;
     if (_searchQuery.isEmpty) {
-      // Jika tidak ada query, tampilkan semua
       filteredCanteens = canteenModel.canteens;
     } else {
-      // Jika ada query, filter berdasarkan nama kantin
       filteredCanteens = canteenModel.canteens.where((canteen) {
         return canteen.name.toLowerCase().contains(_searchQuery);
       }).toList();
     }
-    // -----------------------------
 
     return Scaffold(
       appBar: AppBar(
-        // --- Gunakan widget.user ---
         title: Text('Kanhas - (${widget.user.username})'),
         centerTitle: true,
       ),
@@ -68,13 +59,11 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- GANTI Text MENJADI TextField ---
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Cari kantin...',
                 prefixIcon: const Icon(Icons.search),
-                // Tambahkan tombol clear (X)
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
                   icon: const Icon(Icons.clear),
@@ -91,7 +80,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            // ----------------------------------
             const SizedBox(height: 20),
             Text(
               'Silakan pilih kantin:',
@@ -99,7 +87,6 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 10),
             Expanded(
-              // --- TAMBAHKAN PENANGANAN HASIL KOSONG ---
               child: filteredCanteens.isEmpty
                   ? Center(
                 child: Column(
@@ -118,7 +105,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               )
-              // ---------------------------------------
                   : GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -126,11 +112,9 @@ class _HomePageState extends State<HomePage> {
                   mainAxisSpacing: 16,
                   mainAxisExtent: 210,
                 ),
-                // --- GUNAKAN LIST YANG SUDAH DIFILTER ---
                 itemCount: filteredCanteens.length,
                 itemBuilder: (context, index) {
                   final Canteen canteen = filteredCanteens[index];
-                  // ------------------------------------
 
                   return Stack(
                     children: [
@@ -142,14 +126,12 @@ class _HomePageState extends State<HomePage> {
                             MaterialPageRoute(
                               builder: (context) => MenuPage(
                                 canteen: canteen,
-                                // --- Gunakan widget.user ---
                                 user: widget.user,
                               ),
                             ),
                           );
                         },
                       ),
-                      // --- Gunakan widget.user ---
                       if (widget.user.role == UserRole.admin)
                         Positioned(
                           top: 0,
@@ -208,7 +190,6 @@ class _HomePageState extends State<HomePage> {
                             },
                           ),
                         ),
-                      // --- Gunakan widget.user ---
                       if (widget.user.role == UserRole.admin)
                         Positioned(
                           top: 40,
@@ -244,8 +225,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      // Tombol FAB Admin
-      // --- Gunakan widget.user ---
       floatingActionButton: (widget.user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
@@ -262,7 +241,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// Widget CanteenCard (Tidak berubah)
 class CanteenCard extends StatelessWidget {
   final Canteen canteen;
   final VoidCallback onTap;

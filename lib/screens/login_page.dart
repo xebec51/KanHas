@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/user_model.dart';
-import 'package:kanhas/screens/main_page.dart'; // <-- GANTI TUJUAN
+import 'package:kanhas/screens/main_page.dart';
 import 'package:kanhas/screens/register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,7 +11,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // Logic controller
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -22,21 +21,19 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // Logic login BARU (mencari ke userList)
   void _login() {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-    // Cari user di 'database' userList
-    User? foundUser; // ? berarti bisa jadi 'null' (tidak ketemu)
+    User? foundUser;
     try {
+      // `firstWhere` akan error jika tidak ada elemen yang cocok, jadi perlu try-catch.
       foundUser = userList.firstWhere((user) => user.username == username);
     } catch (e) {
       foundUser = null;
     }
 
     if (foundUser == null) {
-      // Jika username tidak ada
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.red,
@@ -44,7 +41,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } else if (foundUser.password != password) {
-      // Jika username ada TAPI password salah
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.red,
@@ -52,19 +48,15 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
-      // Jika SEMUA BENAR:
-      // Ganti navigasi agar mengirim seluruh OBJEK User
       Navigator.push(
         context,
         MaterialPageRoute(
-          // Kirim seluruh objek user
           builder: (context) => MainPage(user: foundUser!),
         ),
       );
     }
   }
 
-  // UI Login Page
   @override
   Widget build(BuildContext context) {
     return Scaffold(

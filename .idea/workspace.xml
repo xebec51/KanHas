@@ -9,7 +9,31 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="506da239-08f5-4373-b17a-3b4002ec3dd0" name="Changes" comment="" />
+    <list default="true" id="506da239-08f5-4373-b17a-3b4002ec3dd0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/helpers/image_helper.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/helpers/image_helper.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/canteen_data.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/canteen_data.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/canteen_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/canteen_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/cart_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/cart_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/user_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/user_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/add_canteen_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/add_canteen_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/add_menu_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/add_menu_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/cart_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/cart_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/detail_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/detail_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/edit_canteen_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/edit_canteen_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/edit_menu_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/edit_menu_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/edit_profile_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/edit_profile_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/home_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/login_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/main_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/main_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/menu_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/menu_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/order_history_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/order_history_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/profile_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/profile_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/register_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/register_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/screens/settings_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/settings_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/widgets/local_or_network_image.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/widgets/local_or_network_image.dart" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

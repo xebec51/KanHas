@@ -1,16 +1,14 @@
-import 'dart:io'; // <-- Impor untuk 'File'
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:kanhas/helpers/image_helper.dart'; // <-- Impor helper kita
+import 'package:kanhas/helpers/image_helper.dart';
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/canteen_model.dart';
 import 'package:provider/provider.dart';
 
-// --- NAMA CLASS HARUS 'AddCanteenPage' ---
 class AddCanteenPage extends StatefulWidget {
   const AddCanteenPage({super.key});
 
   @override
-  // --- NAMA STATE HARUS '_AddCanteenPageState' ---
   State<AddCanteenPage> createState() => _AddCanteenPageState();
 }
 
@@ -18,7 +16,6 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
   final _nameController = TextEditingController();
   final _locationController = TextEditingController();
 
-  // State untuk menyimpan path file
   String? _pickedImagePath;
 
   final _formKey = GlobalKey<FormState>();
@@ -30,7 +27,6 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
     super.dispose();
   }
 
-  // Fungsi untuk memilih gambar
   Future<void> _pickImage() async {
     final String? imagePath = await ImageHelper.pickAndSaveImage();
     if (imagePath != null) {
@@ -41,12 +37,11 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
   }
 
   void _saveCanteen() {
-    // Validasi form (termasuk cek gambar)
     if (_formKey.currentState!.validate() && _pickedImagePath != null) {
       final newCanteen = Canteen(
         name: _nameController.text,
         location: _locationController.text,
-        imageUrl: _pickedImagePath!, // Simpan path file lokal
+        imageUrl: _pickedImagePath!, // Simpan path file lokal, bukan URL.
         menus: [],
       );
 
@@ -58,7 +53,6 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
 
       Navigator.pop(context);
     } else if (_pickedImagePath == null) {
-      // Tampilkan error jika gambar kosong
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Silakan pilih gambar kantin terlebih dahulu.'),
@@ -111,11 +105,10 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
               ),
               const SizedBox(height: 16),
 
-              // UI UNTUK IMAGE PICKER
               const Text('Gambar Kantin:', style: TextStyle(fontSize: 16)),
               const SizedBox(height: 8),
               InkWell(
-                onTap: _pickImage, // Panggil fungsi pilih gambar
+                onTap: _pickImage,
                 child: Container(
                   height: 200,
                   width: double.infinity,
@@ -124,28 +117,24 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: _pickedImagePath == null
-                  // Tampilan jika gambar BELUM dipilih
                       ? const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add_a_photo,
-                          color: Colors.grey, size: 50),
-                      SizedBox(height: 8),
-                      Text('Ketuk untuk pilih gambar'),
-                    ],
-                  )
-                  // Tampilan jika gambar SUDAH dipilih
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_a_photo,
+                                color: Colors.grey, size: 50),
+                            SizedBox(height: 8),
+                            Text('Ketuk untuk pilih gambar'),
+                          ],
+                        )
                       : ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.file(
-                      File(_pickedImagePath!),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.file(
+                            File(_pickedImagePath!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                 ),
               ),
-              // ------------------------------------
-
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _saveCanteen,

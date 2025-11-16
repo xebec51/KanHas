@@ -3,7 +3,6 @@ import 'package:kanhas/models/user_model.dart';
 import 'package:kanhas/screens/login_page.dart';
 import 'package:kanhas/screens/edit_profile_page.dart';
 import 'package:kanhas/screens/order_history_page.dart';
-// --- TAMBAHKAN IMPOR INI ---
 import 'package:kanhas/screens/settings_page.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -12,7 +11,6 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ... (kode build tidak berubah) ...
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil Saya'),
@@ -33,7 +31,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // ... (kode _buildProfileHeader tidak berubah) ...
   Widget _buildProfileHeader(BuildContext context) {
     return Container(
       width: double.infinity,
@@ -108,14 +105,12 @@ class ProfilePage extends StatelessWidget {
             icon: Icons.settings_outlined,
             title: 'Pengaturan',
             onTap: () {
-              // --- UBAH LOGIKA INI ---
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const SettingsPage(),
                 ),
               );
-              // -----------------------
             },
           ),
           _buildMenuTile(
@@ -133,7 +128,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // ... (kode _buildMenuTile tidak berubah) ...
   Widget _buildMenuTile({
     required IconData icon,
     required String title,
@@ -169,7 +163,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // ... (kode _buildLogoutButton tidak berubah) ...
   Widget _buildLogoutButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),

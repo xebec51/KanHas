@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/canteen_data.dart';
-import 'package:kanhas/models/canteen_model.dart'; // Impor CanteenModel
+import 'package:kanhas/models/canteen_model.dart';
 import 'package:kanhas/models/user_model.dart';
 import 'package:kanhas/screens/detail_page.dart';
 import 'package:kanhas/screens/add_menu_page.dart';
 import 'package:provider/provider.dart';
-import 'package:kanhas/screens/edit_menu_page.dart'; // Impor Halaman Edit
+import 'package:kanhas/screens/edit_menu_page.dart';
 import 'package:kanhas/widgets/local_or_network_image.dart';
 
 class MenuPage extends StatefulWidget {
@@ -20,12 +20,9 @@ class MenuPage extends StatefulWidget {
 class _MenuPageState extends State<MenuPage> {
   String selectedCategory = 'All';
 
-  // --- TAMBAHKAN INI ---
   final _searchController = TextEditingController();
   String _searchQuery = '';
-  // --------------------
 
-  // --- TAMBAHKAN initState ---
   @override
   void initState() {
     super.initState();
@@ -35,15 +32,12 @@ class _MenuPageState extends State<MenuPage> {
       });
     });
   }
-  // -------------------------
 
-  // --- TAMBAHKAN dispose ---
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
-  // -----------------------
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +47,6 @@ class _MenuPageState extends State<MenuPage> {
       orElse: () => widget.canteen,
     );
 
-    // --- LOGIKA FILTER SEKARANG DIPERBARUI ---
-    // 1. Filter berdasarkan Kategori
     List<Menu> filteredMenus;
     if (selectedCategory == 'All') {
       filteredMenus = currentCanteen.menus;
@@ -64,13 +56,11 @@ class _MenuPageState extends State<MenuPage> {
       }).toList();
     }
 
-    // 2. Filter (hasil dari no 1) berdasarkan Pencarian
     if (_searchQuery.isNotEmpty) {
       filteredMenus = filteredMenus.where((menu) {
         return menu.name.toLowerCase().contains(_searchQuery);
       }).toList();
     }
-    // --- AKHIR BLOK LOGIKA ---
 
     return Scaffold(
       appBar: AppBar(
@@ -83,14 +73,11 @@ class _MenuPageState extends State<MenuPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Search Bar
               TextField(
-                // --- MODIFIKASI INI ---
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Cari menu...',
                   prefixIcon: const Icon(Icons.search),
-                  // Tambahkan tombol clear
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
                     icon: const Icon(Icons.clear),
@@ -106,12 +93,9 @@ class _MenuPageState extends State<MenuPage> {
                     borderSide: BorderSide.none,
                   ),
                 ),
-                // onChanged dihapus, karena kita pakai listener
-                // -----------------------
               ),
               const SizedBox(height: 20),
 
-              // Filter Chips
               _buildFilterChips(),
               const SizedBox(height: 20),
 
@@ -123,7 +107,6 @@ class _MenuPageState extends State<MenuPage> {
               ),
               const SizedBox(height: 10),
 
-              // --- TAMBAHKAN INI JIKA HASIL KOSONG ---
               if (filteredMenus.isEmpty)
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 50),
@@ -144,8 +127,6 @@ class _MenuPageState extends State<MenuPage> {
                   ),
                 )
               else
-              // -----------------------------------
-              // GridView untuk Menu
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -153,16 +134,14 @@ class _MenuPageState extends State<MenuPage> {
                     crossAxisCount: 2,
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
-                    mainAxisExtent: 210, // Tinggi Kartu Kaku
+                    mainAxisExtent: 210,
                   ),
                   itemCount: filteredMenus.length,
                   itemBuilder: (context, index) {
                     final Menu menu = filteredMenus[index];
 
-                    // --- Stack tidak berubah ---
                     return Stack(
                       children: [
-                        // Anak #1: Kartu Menu
                         MenuCard(
                           menu: menu,
                           onTap: () {
@@ -175,7 +154,6 @@ class _MenuPageState extends State<MenuPage> {
                           },
                         ),
 
-                        // Anak #2: Tombol Hapus (Hanya Admin)
                         if (widget.user.role == UserRole.admin)
                           Positioned(
                             top: 0,
@@ -198,16 +176,15 @@ class _MenuPageState extends State<MenuPage> {
                             ),
                           ),
 
-                        // Anak #3: Tombol Edit (Hanya Admin)
                         if (widget.user.role == UserRole.admin)
                           Positioned(
-                            top: 40, // Posisikan di bawah tombol hapus
+                            top: 40,
                             right: 0,
                             child: IconButton(
                               icon: const Icon(Icons.edit, size: 20),
                               color: Colors.white,
                               style: IconButton.styleFrom(
-                                backgroundColor: Colors.blue.withAlpha(204), // Warna beda
+                                backgroundColor: Colors.blue.withAlpha(204),
                                 shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.only(
                                     bottomLeft: Radius.circular(10),
@@ -215,7 +192,6 @@ class _MenuPageState extends State<MenuPage> {
                                 ),
                               ),
                               onPressed: () {
-                                // Navigasi ke Halaman Edit
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -230,14 +206,12 @@ class _MenuPageState extends State<MenuPage> {
                           ),
                       ],
                     );
-                    // --- AKHIR PERBAIKAN STACK ---
                   },
                 ),
             ],
           ),
         ),
       ),
-      // Tombol FAB Admin (Tidak berubah)
       floatingActionButton: (widget.user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
@@ -257,7 +231,6 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  // Widget helper filter chips (Tidak berubah)
   Widget _buildFilterChips() {
     final List<String> categories = ['All', 'Nasi', 'Minuman', 'Snack', 'Gorengan'];
     return SizedBox(
@@ -292,7 +265,6 @@ class _MenuPageState extends State<MenuPage> {
     );
   }
 
-  // Dialog Konfirmasi Hapus (Tidak berubah)
   void _showDeleteConfirmationDialog(
       BuildContext context, Canteen canteen, Menu menu) {
     showDialog(
@@ -331,7 +303,6 @@ class _MenuPageState extends State<MenuPage> {
   }
 }
 
-// Widget Kartu Menu
 class MenuCard extends StatelessWidget {
   final Menu menu;
   final VoidCallback onTap;
@@ -355,10 +326,8 @@ class MenuCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- INI PERUBAHANNYA ---
-            // Bungkus gambar dengan Hero
             Hero(
-              // Tag harus unik untuk setiap item
+              // Tag harus unik untuk setiap item.
               tag: menu.name,
               child: LocalOrNetworkImage(
                 imageUrl: menu.imageUrl,
@@ -367,7 +336,6 @@ class MenuCard extends StatelessWidget {
                 errorIcon: Icons.fastfood,
               ),
             ),
-            // ------------------------------------
 
             Expanded(
               child: Padding(

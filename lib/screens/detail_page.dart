@@ -14,7 +14,6 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   int quantity = 1;
-  // State baru untuk tombol 'like'
   bool isFavorite = false;
 
   void _incrementQuantity() {
@@ -34,15 +33,12 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Kita tidak perlu AppBar, karena kita buat sendiri
       body: Stack(
         children: [
-          // KONTEN UTAMA YANG BISA DI-SCROLL
           CustomScrollView(
             slivers: [
-              // --- BAGIAN 1: GAMBAR HEADER (SLIVER) ---
               SliverAppBar(
-                expandedHeight: 300.0, // Tinggi gambar saat diperluas
+                expandedHeight: 300.0,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 pinned: true, // Appbar akan tetap terlihat saat scroll ke atas
@@ -54,26 +50,23 @@ class _DetailPageState extends State<DetailPage> {
                     StretchMode.fadeTitle,
                   ],
                   background: Hero(
-                    tag: widget.menu.name, // Tag Hero dari MenuPage
+                    tag: widget.menu.name,
                     child: LocalOrNetworkImage(
                       imageUrl: widget.menu.imageUrl,
                       width: double.infinity,
-                      height: 350, // Beri tinggi lebih
+                      height: 350,
                       fit: BoxFit.cover,
                       errorIcon: Icons.fastfood,
                     ),
                   ),
                 ),
               ),
-
-              // --- BAGIAN 2: KONTEN DETAIL ---
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Nama Menu
                       Text(
                         widget.menu.name,
                         style: const TextStyle(
@@ -82,8 +75,6 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                       ),
                       const SizedBox(height: 10),
-
-                      // Deskripsi Menu
                       Text(
                         widget.menu.description,
                         style: TextStyle(
@@ -96,12 +87,9 @@ class _DetailPageState extends State<DetailPage> {
                       const SizedBox(height: 20),
                       const Divider(),
                       const SizedBox(height: 20),
-
-                      // Counter Kuantitas (Desain baru)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Harga
                           Text(
                             'Rp ${widget.menu.price * quantity}',
                             style: TextStyle(
@@ -110,11 +98,9 @@ class _DetailPageState extends State<DetailPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-
-                          // Tombol + dan -
                           Container(
                             decoration: BoxDecoration(
-                              color: Colors.red[100], // Ubah warna
+                              color: Colors.red[100],
                               borderRadius: BorderRadius.circular(30),
                             ),
                             child: Row(
@@ -128,7 +114,7 @@ class _DetailPageState extends State<DetailPage> {
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.red, // Ubah warna
+                                    color: Colors.red,
                                   ),
                                 ),
                                 IconButton(
@@ -149,8 +135,6 @@ class _DetailPageState extends State<DetailPage> {
               ),
             ],
           ),
-
-          // --- BAGIAN 3: TOMBOL ADD TO CART (FLOATING) ---
           Positioned(
             bottom: 0,
             left: 0,
@@ -202,8 +186,6 @@ class _DetailPageState extends State<DetailPage> {
               ),
             ),
           ),
-
-          // --- BAGIAN 4: TOMBOL KEMBALI & SUKA (FLOATING) ---
           Positioned(
             top: 40, // Sesuaikan dengan status bar
             left: 15,
@@ -211,7 +193,6 @@ class _DetailPageState extends State<DetailPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Tombol Back
                 CircleAvatar(
                   backgroundColor: Colors.white.withOpacity(0.9),
                   child: IconButton(
@@ -219,7 +200,6 @@ class _DetailPageState extends State<DetailPage> {
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
-                // Tombol Like/Favorite
                 CircleAvatar(
                   backgroundColor: Colors.white.withOpacity(0.9),
                   child: IconButton(

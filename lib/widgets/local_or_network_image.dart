@@ -1,29 +1,27 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
-// Ini adalah widget 'pintar' kita
+// Widget ini dapat menampilkan gambar dari path lokal atau URL jaringan.
 class LocalOrNetworkImage extends StatelessWidget {
   final String imageUrl;
   final double height;
   final double width;
   final BoxFit fit;
-  final IconData errorIcon; // Ikon jika error
+  final IconData errorIcon;
 
   const LocalOrNetworkImage({
     super.key,
     required this.imageUrl,
-    this.height = 120, // Beri nilai default
+    this.height = 120,
     this.width = double.infinity,
     this.fit = BoxFit.cover,
-    this.errorIcon = Icons.broken_image, // 1. TAMBAHKAN INI
+    this.errorIcon = Icons.broken_image,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Cek apakah ini path lokal atau URL web
     final bool isNetworkImage = imageUrl.startsWith('http');
 
-    // Widget placeholder untuk 'error'
     Widget placeholder(IconData icon) {
       return Container(
         height: height,
@@ -34,15 +32,14 @@ class LocalOrNetworkImage extends StatelessWidget {
     }
 
     if (isNetworkImage) {
-      // JIKA INI URL WEB:
       return Image.network(
         imageUrl,
         height: height,
         width: width,
         fit: fit,
         loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child; // Gambar selesai
-          return Container( // Tampilkan placeholder
+          if (loadingProgress == null) return child;
+          return Container(
             height: height,
             width: width,
             color: Colors.grey[300],
@@ -50,18 +47,17 @@ class LocalOrNetworkImage extends StatelessWidget {
           );
         },
         errorBuilder: (context, error, stackTrace) {
-          return placeholder(errorIcon); // 2. Gunakan 'errorIcon' dari parameter
+          return placeholder(errorIcon);
         },
       );
     } else {
-      // JIKA INI FILE LOKAL:
       return Image.file(
-        File(imageUrl), // Gunakan Image.file
+        File(imageUrl),
         height: height,
         width: width,
         fit: fit,
         errorBuilder: (context, error, stackTrace) {
-          return placeholder(errorIcon); // 3. Gunakan 'errorIcon' dari parameter
+          return placeholder(errorIcon);
         },
       );
     }
