@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/user_model.dart';
 import 'package:kanhas/screens/login_page.dart'; // Impor LoginPage
+// --- TAMBAHKAN IMPOR INI ---
+import 'package:kanhas/screens/edit_profile_page.dart';
 
 class ProfilePage extends StatelessWidget {
   final User user;
@@ -39,6 +41,7 @@ class ProfilePage extends StatelessWidget {
 
   // WIDGET HELPER UNTUK HEADER
   Widget _buildProfileHeader(BuildContext context) {
+    // ... (Tidak ada perubahan di sini) ...
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24.0),
@@ -75,9 +78,6 @@ class ProfilePage extends StatelessWidget {
               fontStyle: FontStyle.italic,
             ),
           ),
-          // CATATAN: Nanti Anda bisa tambahkan info lain di sini
-          // jika User model di-update. Contoh:
-          // Text('mahasiswa@email.com', style: TextStyle(fontSize: 16, color: Colors.grey[600])),
         ],
       ),
     );
@@ -90,13 +90,17 @@ class ProfilePage extends StatelessWidget {
       child: Column(
         children: [
           _buildMenuTile(
-            icon: Icons.edit_outlined,
-            title: 'Edit Profil',
+            icon: Icons.lock_outline, // <-- Ganti ikon
+            title: 'Ubah Password', // <-- Ganti judul
             onTap: () {
-              // TODO: Buat Halaman Edit Profil
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fitur belum tersedia')),
+              // --- UBAH LOGIKA INI ---
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditProfilePage(user: user),
+                ),
               );
+              // -----------------------
             },
           ),
           _buildMenuTile(
@@ -137,6 +141,7 @@ class ProfilePage extends StatelessWidget {
 
   // WIDGET HELPER UNTUK LISTTILE KUSTOM
   Widget _buildMenuTile({
+    // ... (Tidak ada perubahan di sini) ...
     required IconData icon,
     required String title,
     required VoidCallback onTap,
@@ -173,6 +178,7 @@ class ProfilePage extends StatelessWidget {
 
   // WIDGET HELPER UNTUK TOMBOL LOGOUT
   Widget _buildLogoutButton(BuildContext context) {
+    // ... (Tidak ada perubahan di sini) ...
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: TextButton.icon(
