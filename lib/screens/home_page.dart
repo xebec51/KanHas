@@ -54,177 +54,188 @@ class _HomePageState extends State<HomePage> {
         title: Text('Kanhas - (${widget.user.username})'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Cari kantin...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                  },
-                )
-                    : null,
-                filled: true,
-                fillColor: Colors.grey[200],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
-                  borderSide: BorderSide.none,
+      // --- PERUBAHAN DIMULAI DI SINI ---
+      body: SingleChildScrollView( // <-- 1. BUNGKUS DENGAN SingleChildScrollView
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Cari kantin...',
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _searchQuery.isNotEmpty
+                      ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                    },
+                  )
+                      : null,
+                  filled: true,
+                  fillColor: Colors.grey[200],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Silakan pilih kantin:',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: filteredCanteens.isEmpty
-                  ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.store_mall_directory_outlined, size: 60, color: Colors.grey[400]),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Kantin tidak ditemukan',
-                      style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                    ),
-                    Text(
-                      'Coba kata kunci lain.',
-                      style: TextStyle(color: Colors.grey[600]),
-                    ),
-                  ],
-                ),
-              )
-                  : GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  mainAxisExtent: 210,
-                ),
-                itemCount: filteredCanteens.length,
-                itemBuilder: (context, index) {
-                  final Canteen canteen = filteredCanteens[index];
+              const SizedBox(height: 20),
+              Text(
+                'Silakan pilih kantin:',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 10),
+              // child: Expanded( // <-- 2. HAPUS Expanded
 
-                  return Stack(
+              // Logika jika hasil filter kosong
+              if (filteredCanteens.isEmpty)
+                Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CanteenCard(
-                        canteen: canteen,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MenuPage(
-                                canteen: canteen,
-                                user: widget.user,
-                              ),
-                            ),
-                          );
-                        },
+                      Icon(Icons.store_mall_directory_outlined, size: 60, color: Colors.grey[400]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Kantin tidak ditemukan',
+                        style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                       ),
-                      if (widget.user.role == UserRole.admin)
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: IconButton(
-                            icon: const Icon(Icons.delete_forever_rounded, size: 20),
-                            color: Colors.white,
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.red.withAlpha(204),
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
+                      Text(
+                        'Coba kata kunci lain.',
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                )
+              else
+              // GridView
+                GridView.builder(
+                  shrinkWrap: true, // <-- 3. TAMBAHKAN shrinkWrap
+                  physics: const NeverScrollableScrollPhysics(), // <-- 4. TAMBAHKAN physics
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    mainAxisExtent: 210,
+                  ),
+                  itemCount: filteredCanteens.length,
+                  itemBuilder: (context, index) {
+                    final Canteen canteen = filteredCanteens[index];
+
+                    return Stack(
+                      children: [
+                        CanteenCard(
+                          canteen: canteen,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MenuPage(
+                                  canteen: canteen,
+                                  user: widget.user,
                                 ),
                               ),
-                            ),
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext dialogContext) {
-                                  return AlertDialog(
-                                    title: const Text('Hapus Kantin'),
-                                    content: Text(
-                                      'Apakah Anda yakin ingin menghapus ${canteen.name}? '
-                                          'Semua menu di dalamnya juga akan terhapus.',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text('Batal'),
-                                        onPressed: () {
-                                          Navigator.of(dialogContext).pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        style: TextButton.styleFrom(
-                                            foregroundColor: Colors.red),
-                                        child: const Text('Hapus'),
-                                        onPressed: () {
-                                          context
-                                              .read<CanteenModel>()
-                                              .deleteCanteen(canteen);
-                                          Navigator.of(dialogContext).pop();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                  '${canteen.name} telah dihapus.'),
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                            );
+                          },
                         ),
-                      if (widget.user.role == UserRole.admin)
-                        Positioned(
-                          top: 40,
-                          right: 0,
-                          child: IconButton(
-                            icon: const Icon(Icons.edit, size: 20),
-                            color: Colors.white,
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.blue.withAlpha(204),
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                ),
-                              ),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditCanteenPage(
-                                    canteenToEdit: canteen,
+                        if (widget.user.role == UserRole.admin)
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: IconButton(
+                              icon: const Icon(Icons.delete_forever_rounded, size: 20),
+                              color: Colors.white,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.red.withAlpha(204),
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
                                   ),
                                 ),
-                              );
-                            },
+                              ),
+                              onPressed: () {
+                                // Logika showDialog (tidak berubah)
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext dialogContext) {
+                                    return AlertDialog(
+                                      title: const Text('Hapus Kantin'),
+                                      content: Text(
+                                        'Apakah Anda yakin ingin menghapus ${canteen.name}? '
+                                            'Semua menu di dalamnya juga akan terhapus.',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('Batal'),
+                                          onPressed: () {
+                                            Navigator.of(dialogContext).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          style: TextButton.styleFrom(
+                                              foregroundColor: Colors.red),
+                                          child: const Text('Hapus'),
+                                          onPressed: () {
+                                            context
+                                                .read<CanteenModel>()
+                                                .deleteCanteen(canteen);
+                                            Navigator.of(dialogContext).pop();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    '${canteen.name} telah dihapus.'),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ],
+                        if (widget.user.role == UserRole.admin)
+                          Positioned(
+                            top: 40,
+                            right: 0,
+                            child: IconButton(
+                              icon: const Icon(Icons.edit, size: 20),
+                              color: Colors.white,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Colors.blue.withAlpha(204),
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    bottomLeft: Radius.circular(10),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditCanteenPage(
+                                      canteenToEdit: canteen,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              // ), // <-- 2. HAPUS Expanded
+            ],
+          ),
         ),
       ),
+      // --- PERUBAHAN SELESAI ---
       floatingActionButton: (widget.user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
@@ -241,6 +252,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+// Widget CanteenCard (Tidak berubah)
 class CanteenCard extends StatelessWidget {
   final Canteen canteen;
   final VoidCallback onTap;

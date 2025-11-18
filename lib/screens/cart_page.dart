@@ -2,23 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:kanhas/models/cart_model.dart';
 import 'package:provider/provider.dart';
 import 'package:kanhas/screens/order_history_page.dart';
+import 'package:kanhas/widgets/local_or_network_image.dart'; // Impor LocalOrNetworkImage
 
-import '../widgets/local_or_network_image.dart';
-
-class CartPage extends StatefulWidget {
+// Ubah dari StatefulWidget menjadi StatelessWidget
+class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
   @override
-  State<CartPage> createState() => _CartPageState();
-}
-
-class _CartPageState extends State<CartPage> {
-  @override
   Widget build(BuildContext context) {
+    // Pindahkan 'Consumer' ke dalam build method
     return Consumer<CartModel>(
       builder: (context, cart, child) {
         double totalPrice = cart.totalPrice;
 
+        // Tampilan keranjang kosong
         if (cart.items.isEmpty) {
           return Scaffold(
             appBar: AppBar(
@@ -47,6 +44,7 @@ class _CartPageState extends State<CartPage> {
           );
         }
 
+        // Tampilan keranjang jika ada isinya
         return Scaffold(
           appBar: AppBar(
             title: const Text('Keranjang Saya'),
@@ -54,6 +52,7 @@ class _CartPageState extends State<CartPage> {
           ),
           body: Stack(
             children: [
+              // 1. DAFTAR ITEM
               ListView.builder(
                 padding: const EdgeInsets.only(bottom: 200),
                 itemCount: cart.items.length,
@@ -97,7 +96,8 @@ class _CartPageState extends State<CartPage> {
                             IconButton(
                               icon: const Icon(Icons.remove, size: 18),
                               onPressed: () {
-                                cart.decrement(cartItem);
+                                // Gunakan context.read untuk memanggil fungsi
+                                context.read<CartModel>().decrement(cartItem);
                               },
                             ),
                             Text(
@@ -107,7 +107,7 @@ class _CartPageState extends State<CartPage> {
                             IconButton(
                               icon: const Icon(Icons.add, size: 18),
                               onPressed: () {
-                                cart.increment(cartItem);
+                                context.read<CartModel>().increment(cartItem);
                               },
                             ),
                           ],
@@ -117,6 +117,8 @@ class _CartPageState extends State<CartPage> {
                   );
                 },
               ),
+
+              // 2. RINGKASAN & PEMBAYARAN
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -124,14 +126,18 @@ class _CartPageState extends State<CartPage> {
                 child: Container(
                   padding: const EdgeInsets.all(20.0),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withAlpha(26),
-                        blurRadius: 10,
-                        offset: const Offset(0, -5),
-                      ),
-                    ],
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withAlpha(26),
+                          blurRadius: 10,
+                          offset: const Offset(0, -5),
+                        ),
+                      ],
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      )
                   ),
                   child: Column(
                     children: [
@@ -160,11 +166,13 @@ class _CartPageState extends State<CartPage> {
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Checkout berhasil! Pesanan Anda sedang diproses.'),
+                              content: Text(
+                                  'Checkout berhasil! Pesanan Anda sedang diproses.'),
                               backgroundColor: Colors.green,
                             ),
                           );
 
+                          // Gunakan Navigator.push
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -177,7 +185,7 @@ class _CartPageState extends State<CartPage> {
                           foregroundColor: Colors.white,
                           minimumSize: const Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                         ),
                         child: const Text(

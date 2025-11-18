@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/kanhas.iml" filepath="$PROJECT_DIR$/kanhas.iml" />
-      <module fileurl="file://$PROJECT_DIR$/android/kanhas_android.iml" filepath="$PROJECT_DIR$/android/kanhas_android.iml" />
     </modules>
   </component>
 </project>

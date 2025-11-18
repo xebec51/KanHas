@@ -27,7 +27,6 @@ class _LoginPageState extends State<LoginPage> {
 
     User? foundUser;
     try {
-      // `firstWhere` akan error jika tidak ada elemen yang cocok, jadi perlu try-catch.
       foundUser = userList.firstWhere((user) => user.username == username);
     } catch (e) {
       foundUser = null;
@@ -48,12 +47,17 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
-      Navigator.push(
+      // --- PERBAIKAN DI SINI ---
+      // Ganti Navigator.push menjadi pushAndRemoveUntil
+      // Ini akan menghapus halaman login dari tumpukan
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => MainPage(user: foundUser!),
         ),
+            (route) => false, // Predikat 'false' menghapus semua rute sebelumnya
       );
+      // ------------------------
     }
   }
 
@@ -63,7 +67,8 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+            padding:
+            const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -130,7 +135,6 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     TextButton(
-                      // Navigasi ke Halaman Register
                       onPressed: () {
                         Navigator.push(
                           context,
