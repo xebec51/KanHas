@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:kanhas/models/cart_model.dart';
 import 'package:provider/provider.dart';
 import 'package:kanhas/screens/order_history_page.dart';
-import 'package:kanhas/widgets/local_or_network_image.dart'; // Impor LocalOrNetworkImage
+import 'package:kanhas/widgets/local_or_network_image.dart';
 
-// Ubah dari StatefulWidget menjadi StatelessWidget
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Pindahkan 'Consumer' ke dalam build method
     return Consumer<CartModel>(
       builder: (context, cart, child) {
         double totalPrice = cart.totalPrice;
 
-        // Tampilan keranjang kosong
         if (cart.items.isEmpty) {
           return Scaffold(
             appBar: AppBar(
@@ -44,7 +41,6 @@ class CartPage extends StatelessWidget {
           );
         }
 
-        // Tampilan keranjang jika ada isinya
         return Scaffold(
           appBar: AppBar(
             title: const Text('Keranjang Saya'),
@@ -52,7 +48,6 @@ class CartPage extends StatelessWidget {
           ),
           body: Stack(
             children: [
-              // 1. DAFTAR ITEM
               ListView.builder(
                 padding: const EdgeInsets.only(bottom: 200),
                 itemCount: cart.items.length,
@@ -96,7 +91,6 @@ class CartPage extends StatelessWidget {
                             IconButton(
                               icon: const Icon(Icons.remove, size: 18),
                               onPressed: () {
-                                // Gunakan context.read untuk memanggil fungsi
                                 context.read<CartModel>().decrement(cartItem);
                               },
                             ),
@@ -117,8 +111,6 @@ class CartPage extends StatelessWidget {
                   );
                 },
               ),
-
-              // 2. RINGKASAN & PEMBAYARAN
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -172,7 +164,6 @@ class CartPage extends StatelessWidget {
                             ),
                           );
 
-                          // Gunakan Navigator.push
                           Navigator.push(
                             context,
                             MaterialPageRoute(

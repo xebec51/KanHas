@@ -41,9 +41,9 @@ class _DetailPageState extends State<DetailPage> {
                 expandedHeight: 300.0,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-                pinned: true, // Appbar akan tetap terlihat saat scroll ke atas
-                stretch: true, // Gambar akan 'stretch' jika ditarik
-                automaticallyImplyLeading: false, // Sembunyikan tombol back default
+                pinned: true,
+                stretch: true,
+                automaticallyImplyLeading: false,
                 flexibleSpace: FlexibleSpaceBar(
                   stretchModes: const [
                     StretchMode.zoomBackground,
@@ -80,7 +80,7 @@ class _DetailPageState extends State<DetailPage> {
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[700],
-                          height: 1.5, // Beri jarak antar baris
+                          height: 1.5,
                         ),
                         textAlign: TextAlign.justify,
                       ),
@@ -126,8 +126,6 @@ class _DetailPageState extends State<DetailPage> {
                           ),
                         ],
                       ),
-
-                      // Beri jarak aman di bawah agar tidak tertutup tombol
                       const SizedBox(height: 120),
                     ],
                   ),
@@ -142,18 +140,18 @@ class _DetailPageState extends State<DetailPage> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(20),
-                      blurRadius: 10,
-                      offset: const Offset(0, -5),
-                    ),
-                  ],
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  )
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(20),
+                    blurRadius: 10,
+                    offset: const Offset(0, -5),
+                  ),
+                ],
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                ),
               ),
               child: ElevatedButton(
                 onPressed: () {
@@ -162,13 +160,22 @@ class _DetailPageState extends State<DetailPage> {
                     quantity: quantity,
                   );
                   Provider.of<CartModel>(context, listen: false).add(item);
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
                           '${item.menu.name} (x${item.quantity}) ditambahkan ke keranjang.'),
                       backgroundColor: Colors.green,
+                      behavior: SnackBarBehavior.floating,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      duration: const Duration(seconds: 2),
                     ),
                   );
+
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -187,7 +194,7 @@ class _DetailPageState extends State<DetailPage> {
             ),
           ),
           Positioned(
-            top: 40, // Sesuaikan dengan status bar
+            top: 40,
             left: 15,
             right: 15,
             child: Row(
@@ -217,6 +224,12 @@ class _DetailPageState extends State<DetailPage> {
                               ? '${widget.menu.name} ditambahkan ke favorit'
                               : '${widget.menu.name} dihapus dari favorit'),
                           backgroundColor: Colors.red[400],
+                          behavior: SnackBarBehavior.floating,
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                           duration: const Duration(seconds: 1),
                         ),
                       );

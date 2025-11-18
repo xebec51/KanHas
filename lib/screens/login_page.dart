@@ -27,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
 
     User? foundUser;
     try {
+      // Mencari user berdasarkan username.
       foundUser = userList.firstWhere((user) => user.username == username);
     } catch (e) {
       foundUser = null;
@@ -47,17 +48,14 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
-      // --- PERBAIKAN DI SINI ---
-      // Ganti Navigator.push menjadi pushAndRemoveUntil
-      // Ini akan menghapus halaman login dari tumpukan
+      // Hapus halaman login dari tumpukan agar pengguna tidak bisa kembali.
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (context) => MainPage(user: foundUser!),
         ),
-            (route) => false, // Predikat 'false' menghapus semua rute sebelumnya
+            (route) => false,
       );
-      // ------------------------
     }
   }
 

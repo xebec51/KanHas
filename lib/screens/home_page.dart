@@ -54,8 +54,7 @@ class _HomePageState extends State<HomePage> {
         title: Text('Kanhas - (${widget.user.username})'),
         centerTitle: true,
       ),
-      // --- PERUBAHAN DIMULAI DI SINI ---
-      body: SingleChildScrollView( // <-- 1. BUNGKUS DENGAN SingleChildScrollView
+      body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -88,9 +87,6 @@ class _HomePageState extends State<HomePage> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 10),
-              // child: Expanded( // <-- 2. HAPUS Expanded
-
-              // Logika jika hasil filter kosong
               if (filteredCanteens.isEmpty)
                 Center(
                   child: Column(
@@ -110,10 +106,9 @@ class _HomePageState extends State<HomePage> {
                   ),
                 )
               else
-              // GridView
                 GridView.builder(
-                  shrinkWrap: true, // <-- 3. TAMBAHKAN shrinkWrap
-                  physics: const NeverScrollableScrollPhysics(), // <-- 4. TAMBAHKAN physics
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 16,
@@ -156,7 +151,6 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               onPressed: () {
-                                // Logika showDialog (tidak berubah)
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext dialogContext) {
@@ -230,12 +224,10 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 ),
-              // ), // <-- 2. HAPUS Expanded
             ],
           ),
         ),
       ),
-      // --- PERUBAHAN SELESAI ---
       floatingActionButton: (widget.user.role == UserRole.admin)
           ? FloatingActionButton(
         onPressed: () {
@@ -252,7 +244,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// Widget CanteenCard (Tidak berubah)
 class CanteenCard extends StatelessWidget {
   final Canteen canteen;
   final VoidCallback onTap;
