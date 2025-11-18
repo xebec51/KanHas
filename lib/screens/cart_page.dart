@@ -1,18 +1,25 @@
+// lib/screens/cart_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/cart_model.dart';
 import 'package:provider/provider.dart';
 import 'package:kanhas/screens/order_history_page.dart';
 import 'package:kanhas/widgets/local_or_network_image.dart';
+// --- TAMBAHKAN IMPOR INI ---
+import 'package:kanhas/models/order_history_model.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Gunakan 'Consumer' BUKAN 'context.watch'
+    // agar kita bisa mengakses 'cart' di dalam builder
     return Consumer<CartModel>(
       builder: (context, cart, child) {
         double totalPrice = cart.totalPrice;
 
+        // Tampilan keranjang kosong
         if (cart.items.isEmpty) {
           return Scaffold(
             appBar: AppBar(
@@ -41,6 +48,7 @@ class CartPage extends StatelessWidget {
           );
         }
 
+        // Tampilan keranjang jika ada isinya
         return Scaffold(
           appBar: AppBar(
             title: const Text('Keranjang Saya'),
@@ -48,6 +56,7 @@ class CartPage extends StatelessWidget {
           ),
           body: Stack(
             children: [
+              // 1. DAFTAR ITEM
               ListView.builder(
                 padding: const EdgeInsets.only(bottom: 200),
                 itemCount: cart.items.length,
@@ -111,6 +120,8 @@ class CartPage extends StatelessWidget {
                   );
                 },
               ),
+
+              // 2. RINGKASAN & PEMBAYARAN
               Positioned(
                 bottom: 0,
                 left: 0,
@@ -129,8 +140,7 @@ class CartPage extends StatelessWidget {
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
-                      )
-                  ),
+                      )),
                   child: Column(
                     children: [
                       Row(
@@ -152,18 +162,37 @@ class CartPage extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 20),
+
+                      // --- PERBARUI LOGIKA 'onPressed' INI ---
                       ElevatedButton(
                         onPressed: () {
+                          // 1. Ambil data keranjang saat ini
+                          final items = cart.items;
+                          final total = cart.totalPrice;
+
+                          // 2. Tambahkan ke Riwayat Pesanan
+                          context
+                              .read<OrderHistoryModel>()
+                              .addOrder(items, total);
+
+                          // 3. Kosongkan Keranjang
                           context.read<CartModel>().clear();
 
+                          // 4. Tampilkan notifikasi
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  'Checkout berhasil! Pesanan Anda sedang diproses.'),
+                            SnackBar(
+                              content: const Text(
+                                  'Checkout berhasil! Pesanan Anda telah dicatat.'),
                               backgroundColor: Colors.green,
+                              behavior: SnackBarBehavior.floating,
+                              margin: const EdgeInsets.all(20),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           );
 
+                          // 5. Navigasi ke Halaman Riwayat
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -185,6 +214,7 @@ class CartPage extends StatelessWidget {
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
+                      // ---------------------------------
                     ],
                   ),
                 ),

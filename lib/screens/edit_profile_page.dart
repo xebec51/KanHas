@@ -67,7 +67,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     userList.indexWhere((u) => u.username == widget.user.username);
 
     if (userIndex == -1) {
-      // Seharusnya tidak akan terjadi, tapi untuk keamanan.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Gagal menemukan user. Silakan login ulang.'),
@@ -82,12 +81,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
 
-    // Karena field di class User bersifat 'final', kita harus buat objek baru.
+    // --- PERBAIKAN 1 DI SINI ---
+    // Kita harus menyertakan info 'fullName' dan 'email' yang sudah ada
+    // saat membuat objek User baru.
     final updatedUser = User(
       username: widget.user.username,
-      password: _newPasswordController.text,
+      password: _newPasswordController.text, // Password baru
       role: widget.user.role,
+      fullName: widget.user.fullName, // <-- TAMBAHKAN INI
+      email: widget.user.email, // <-- TAMBAHKAN INI
+      profileImagePath: widget.user.profileImagePath, // <-- TAMBAHKAN INI
     );
+    // ----------------------------
 
     userList[userIndex] = updatedUser;
 
@@ -99,19 +104,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
         margin: const EdgeInsets.all(20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-        )
-      ),
-    );
+        ), // <-- PERBAIKAN 2: Kurang ')' di baris sebelumnya
+      ), // <-- Tambahkan ')'
+    ); // <-- Tambahkan ')'
 
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LoginPage()),
-          (route) => false, // Hapus semua halaman sebelumnya.
+          (route) => false,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    // ... (UI Build Method TIDAK BERUBAH) ...
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ubah Password'),
@@ -168,7 +174,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   if (value == null || value.isEmpty) {
                     return 'Password baru tidak boleh kosong';
                   }
-                  if (value.length < 3) { // Samakan dengan logic login.
+                  if (value.length < 3) {
                     return 'Password minimal 3 karakter';
                   }
                   return null;

@@ -1,15 +1,14 @@
-// lib/screens/profile_page.dart
-
-import 'dart:io'; // <-- Impor untuk File
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:kanhas/helpers/image_helper.dart'; // <-- Impor Image Helper
+import 'package:kanhas/helpers/image_helper.dart';
 import 'package:kanhas/models/user_model.dart';
 import 'package:kanhas/screens/login_page.dart';
 import 'package:kanhas/screens/edit_profile_page.dart';
 import 'package:kanhas/screens/order_history_page.dart';
 import 'package:kanhas/screens/settings_page.dart';
+// --- TAMBAHKAN IMPOR INI ---
+import 'package:kanhas/screens/edit_info_page.dart';
 
-// --- UBAH MENJADI STATEFULWIDGET ---
 class ProfilePage extends StatefulWidget {
   final User user;
   const ProfilePage({super.key, required this.user});
@@ -19,33 +18,26 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // --- BUAT STATE UNTUK MENYIMPAN USER SAAT INI ---
   late User currentUser;
 
   @override
   void initState() {
     super.initState();
-    // Salin data user dari widget ke state saat halaman dibuka
     currentUser = widget.user;
   }
-  // ---------------------------------------------
 
-  // --- FUNGSI UNTUK MEMILIH GAMBAR PROFIL ---
   Future<void> _pickProfileImage() async {
     final String? imagePath = await ImageHelper.pickAndSaveImage();
-    if (imagePath == null) return; // Pengguna membatalkan
+    if (imagePath == null) return;
 
-    // 1. Buat objek user baru dengan path gambar yang diperbarui
     final updatedUser = currentUser.copyWith(profileImagePath: imagePath);
 
-    // 2. Perbarui 'database' global (userList)
     int userIndex =
     userList.indexWhere((u) => u.username == currentUser.username);
     if (userIndex != -1) {
       userList[userIndex] = updatedUser;
     }
 
-    // 3. Perbarui state lokal agar UI langsung berubah
     setState(() {
       currentUser = updatedUser;
     });
@@ -62,10 +54,10 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-  // ------------------------------------------
 
   @override
   Widget build(BuildContext context) {
+    // ... (UI Build Method TIDAK BERUBAH) ...
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil Saya'),
@@ -86,22 +78,18 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // --- WIDGET HELPER UNTUK AVATAR (BARU) ---
   Widget _buildAvatar() {
+    // ... (Widget _buildAvatar TIDAK BERUBAH) ...
     ImageProvider? backgroundImage;
 
-    // Gunakan 'currentUser' dari state, bukan 'widget.user'
     if (currentUser.profileImagePath != null) {
-      // Jika ada path, gunakan FileImage
       backgroundImage = FileImage(File(currentUser.profileImagePath!));
     }
 
     return CircleAvatar(
       radius: 50,
       backgroundColor: Colors.red[100],
-      // Tampilkan gambar jika ada
       backgroundImage: backgroundImage,
-      // Tampilkan ikon jika tidak ada gambar
       child: backgroundImage == null
           ? Icon(
         Icons.person,
@@ -111,10 +99,9 @@ class _ProfilePageState extends State<ProfilePage> {
           : null,
     );
   }
-  // ----------------------------------------
 
-  // --- WIDGET HELPER UNTUK HEADER (DIPERBARUI) ---
   Widget _buildProfileHeader(BuildContext context) {
+    // ... (Widget _buildProfileHeader TIDAK BERUBAH) ...
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24.0),
@@ -124,10 +111,9 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: Column(
         children: [
-          // --- STACK UNTUK AVATAR & TOMBOL EDIT FOTO ---
           Stack(
             children: [
-              _buildAvatar(), // Panggil helper avatar
+              _buildAvatar(),
               Positioned(
                 bottom: 0,
                 right: 0,
@@ -136,16 +122,15 @@ class _ProfilePageState extends State<ProfilePage> {
                   backgroundColor: Colors.red,
                   child: IconButton(
                     icon: const Icon(Icons.edit, size: 18, color: Colors.white),
-                    onPressed: _pickProfileImage, // Panggil fungsi ganti foto
+                    onPressed: _pickProfileImage,
                   ),
                 ),
               ),
             ],
           ),
-          // ------------------------------------------
           const SizedBox(height: 16),
           Text(
-            currentUser.fullName, // <-- Ganti ke fullName
+            currentUser.fullName,
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -153,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 4),
           Text(
-            currentUser.email, // <-- Ganti ke email
+            currentUser.email,
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -161,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Role: ${currentUser.role.name}', // <-- Gunakan currentUser
+            'Role: ${currentUser.role.name}',
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[600],
@@ -172,23 +157,35 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-  // -----------------------------------------------
 
+  // --- PERBARUI _buildProfileMenu ---
   Widget _buildProfileMenu(BuildContext context) {
     return Container(
       color: Colors.white,
       child: Column(
         children: [
           _buildMenuTile(
-            icon: Icons.edit_outlined, // <-- GANTI IKON
-            title: 'Edit Info Profil', // <-- GANTI JUDUL
-            onTap: () {
-              // TODO: Arahkan ke halaman Edit Info (Batch 3)
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('Fitur Edit Info belum tersedia')),
+            icon: Icons.edit_outlined,
+            title: 'Edit Info Profil',
+            // --- UBAH LOGIKA 'onTap' DI SINI ---
+            onTap: () async { // 1. Jadikan async
+              // 2. Arahkan ke halaman baru dan TUNGGU hasilnya
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditInfoPage(user: currentUser),
+                ),
               );
+
+              // 3. Cek jika ada data 'User' yang dikembalikan
+              if (result != null && result is User) {
+                // 4. Perbarui state lokal agar UI header berubah
+                setState(() {
+                  currentUser = result;
+                });
+              }
             },
+            // ---------------------------------
           ),
           _buildMenuTile(
             icon: Icons.lock_outline,
@@ -197,7 +194,6 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  // Kirim 'currentUser' dari state
                   builder: (context) => EditProfilePage(user: currentUser),
                 ),
               );
@@ -234,12 +230,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildMenuTile({
+    // ... (Widget _buildMenuTile TIDAK BERUBAH) ...
     required IconData icon,
     required String title,
     required VoidCallback onTap,
     bool hideDivider = false,
   }) {
-    // ... (Tidak ada perubahan di sini) ...
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -271,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildLogoutButton(BuildContext context) {
-    // ... (Tidak ada perubahan di sini) ...
+    // ... (Widget _buildLogoutButton TIDAK BERUBAH) ...
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: TextButton.icon(
