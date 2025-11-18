@@ -19,10 +19,10 @@ class _RegisterPageState extends State<RegisterPage> {
     bool userExists = userList.any((user) => user.username == username);
 
     if (userExists) {
-      ScaffoldMessenger.of(context).sckBar(
-        const SnackBar(
-          backgroundColor: Colors.rconst ed,
-          content: Text('Username sudah terdaftar!'),
+      ScaffoldMessenger.of(context).showSnackBar( // <-- Perbaikan 1: 'showSnackBar'
+        SnackBar(
+          backgroundColor: Colors.red, // <-- Perbaikan 2: 'Colors.red'
+          content: const Text('Username sudah terdaftar!'),
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(

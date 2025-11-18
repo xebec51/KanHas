@@ -1,4 +1,8 @@
+// lib/screens/add_menu_page.dart
+
+import 'dart:io'; // <-- TAMBAHKAN INI
 import 'package:flutter/material.dart';
+import 'package:kanhas/helpers/image_helper.dart'; // <-- TAMBAHKAN INI
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/canteen_model.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +19,11 @@ class _AddMenuPageState extends State<AddMenuPage> {
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
   final _descController = TextEditingController();
-  final _imageUrlController = TextEditingController();
+  // final _imageUrlController = TextEditingController(); // <-- HAPUS INI
+
+  // --- TAMBAHKAN STATE UNTUK PATH GAMBAR ---
+  String? _pickedImagePath;
+  // ----------------------------------------
 
   final _formKey = GlobalKey<FormState>();
 
@@ -24,27 +32,61 @@ class _AddMenuPageState extends State<AddMenuPage> {
     _nameController.dispose();
     _priceController.dispose();
     _descController.dispose();
-    _imageUrlController.dispose();
+    // _imageUrlController.dispose(); // <-- HAPUS INI
     super.dispose();
   }
 
+  // --- TAMBAHKAN FUNGSI PICK IMAGE ---
+  Future<void> _pickImage() async {
+    final String? imagePath = await ImageHelper.pickAndSaveImage();
+    if (imagePath != null) {
+      setState(() {
+        _pickedImagePath = imagePath;
+      });
+    }
+  }
+  // ----------------------------------
+
   void _saveMenu() {
-    if (_formKey.currentState!.validate()) {
+    // --- PERBARUI LOGIKA VALIDASI DAN SAVE ---
+    if (_formKey.currentState!.validate() && _pickedImagePath != null) {
       final newMenu = Menu(
         name: _nameController.text,
-        price: int.parse(_priceController.text), // Ubah input teks ke angka.
+        price: int.parse(_priceController.text),
         description: _descController.text,
-        imageUrl: _imageUrlController.text,
+        imageUrl: _pickedImagePath!, // <-- GANTI DENGAN PATH LOKAL
       );
 
       context.read<CanteenModel>().addMenuToCanteen(widget.canteen, newMenu);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${newMenu.name} berhasil ditambahkan!')),
+        SnackBar(
+          content: Text('${newMenu.name} berhasil ditambahkan!'),
+          // Tambahkan behavior floating agar konsisten
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       );
 
       Navigator.pop(context);
+    } else if (_pickedImagePath == null) {
+      // Tampilkan error jika gambar kosong
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Silakan pilih gambar menu terlebih dahulu.'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
     }
+    // --- AKHIR PERBARUAN ---
   }
 
   @override
@@ -74,7 +116,6 @@ class _AddMenuPageState extends State<AddMenuPage> {
                 },
               ),
               const SizedBox(height: 16),
-
               TextFormField(
                 controller: _priceController,
                 decoration: const InputDecoration(
@@ -94,7 +135,6 @@ class _AddMenuPageState extends State<AddMenuPage> {
                 },
               ),
               const SizedBox(height: 16),
-
               TextFormField(
                 controller: _descController,
                 decoration: const InputDecoration(
@@ -112,23 +152,45 @@ class _AddMenuPageState extends State<AddMenuPage> {
               ),
               const SizedBox(height: 16),
 
-              TextFormField(
-                controller: _imageUrlController,
-                decoration: const InputDecoration(
-                  labelText: 'URL Gambar Menu',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.image),
-                ),
-                keyboardType: TextInputType.url,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'URL Gambar tidak boleh kosong';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 32),
+              // --- HAPUS TEXTFORMFIELD URL GAMBAR ---
+              // TextFormField( ... ),
 
+              // --- TAMBAHKAN UI IMAGE PICKER ---
+              const Text('Gambar Menu:', style: TextStyle(fontSize: 16)),
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: _pickImage, // Panggil fungsi pilih gambar
+                child: Container(
+                  height: 200,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: _pickedImagePath == null
+                  // Tampilan jika gambar BELUM dipilih
+                      ? const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add_a_photo,
+                          color: Colors.grey, size: 50),
+                      SizedBox(height: 8),
+                      Text('Ketuk untuk pilih gambar'),
+                    ],
+                  )
+                  // Tampilan jika gambar SUDAH dipilih
+                      : ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      File(_pickedImagePath!),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+              // ------------------------------------
+
+              const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _saveMenu,
                 style: ElevatedButton.styleFrom(
@@ -136,7 +198,8 @@ class _AddMenuPageState extends State<AddMenuPage> {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text('Simpan Menu', style: TextStyle(fontSize: 18)),
+                child:
+                const Text('Simpan Menu', style: TextStyle(fontSize: 18)),
               ),
             ],
           ),

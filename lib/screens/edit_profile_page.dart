@@ -69,8 +69,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     if (userIndex == -1) {
       // Seharusnya tidak akan terjadi, tapi untuk keamanan.
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Gagal menemukan user. Silakan login ulang.'),
+        SnackBar(
+          content: const Text('Gagal menemukan user. Silakan login ulang.'),
           backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.all(20),
@@ -89,7 +89,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       role: widget.user.role,
     );
 
-   ist[userIndex] = updatedUseconst r;
+    userList[userIndex] = updatedUser;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -99,6 +99,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         margin: const EdgeInsets.all(20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
+        )
       ),
     );
 
