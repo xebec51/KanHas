@@ -10,14 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="506da239-08f5-4373-b17a-3b4002ec3dd0" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/models/order_history_model.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/models/order_model.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/screens/edit_info_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/cart_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/cart_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/edit_profile_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/edit_profile_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/screens/profile_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/profile_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/canteen_data.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/canteen_data.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -196,5 +191,21 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
     </layout>
+  </component>
+  <component name="play_dynamic_filters_status">
+    <option name="appIdToCheckInfo">
+      <map>
+        <entry key="com.example.kanhas">
+          <value>
+            <CheckInfo lastCheckTimestamp="1763429173366" />
+          </value>
+        </entry>
+        <entry key="com.example.kanhas.test">
+          <value>
+            <CheckInfo lastCheckTimestamp="1763429173366" />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
