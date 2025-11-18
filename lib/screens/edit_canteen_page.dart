@@ -27,7 +27,6 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
     super.initState();
     _nameController.text = widget.canteenToEdit.name;
     _locationController.text = widget.canteenToEdit.location;
-
     _pickedImagePath = widget.canteenToEdit.imageUrl;
   }
 
@@ -48,12 +47,11 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
   }
 
   void _updateCanteen() {
-    // Gambar tidak wajib di-update saat mengedit.
     if (_formKey.currentState!.validate() && _pickedImagePath != null) {
       final updatedCanteen = Canteen(
         name: _nameController.text,
         location: _locationController.text,
-        imageUrl: _pickedImagePath!, // Simpan path gambar yang baru atau yang lama.
+        imageUrl: _pickedImagePath!,
         menus: widget.canteenToEdit.menus,
       );
 
@@ -63,7 +61,15 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${updatedCanteen.name} berhasil diperbarui!')),
+        SnackBar(
+          content: Text('${updatedCanteen.name} berhasil diperbarui!'),
+          backgroundColor: Colors.green, // Tambahkan warna sukses
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       );
 
       Navigator.pop(context);
@@ -112,7 +118,6 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                 },
               ),
               const SizedBox(height: 16),
-
               const Text('Gambar Kantin:', style: TextStyle(fontSize: 16)),
               const SizedBox(height: 8),
               InkWell(
@@ -128,23 +133,23 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                       ? const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.add_a_photo, color: Colors.grey, size: 50),
+                      Icon(Icons.add_a_photo,
+                          color: Colors.grey, size: 50),
                       SizedBox(height: 8),
                       Text('Ketuk untuk pilih gambar'),
                     ],
                   )
                       : ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: LocalOrNetworkImage(
-                            imageUrl: _pickedImagePath!,
-                            height: 200,
-                            width: double.infinity,
-                            errorIcon: Icons.store,
-                          ),
-                        ),
+                    borderRadius: BorderRadius.circular(10),
+                    child: LocalOrNetworkImage(
+                      imageUrl: _pickedImagePath!,
+                      height: 200,
+                      width: double.infinity,
+                      errorIcon: Icons.store,
+                    ),
+                  ),
                 ),
               ),
-
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _updateCanteen,
@@ -153,7 +158,8 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text('Simpan Perubahan', style: TextStyle(fontSize: 18)),
+                child: const Text('Simpan Perubahan',
+                    style: TextStyle(fontSize: 18)),
               ),
             ],
           ),

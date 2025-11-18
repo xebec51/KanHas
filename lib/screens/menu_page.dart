@@ -153,7 +153,6 @@ class _MenuPageState extends State<MenuPage> {
                             );
                           },
                         ),
-
                         if (widget.user.role == UserRole.admin)
                           Positioned(
                             top: 0,
@@ -175,7 +174,6 @@ class _MenuPageState extends State<MenuPage> {
                               },
                             ),
                           ),
-
                         if (widget.user.role == UserRole.admin)
                           Positioned(
                             top: 40,
@@ -292,6 +290,11 @@ class _MenuPageState extends State<MenuPage> {
                   SnackBar(
                     content: Text('${menu.name} telah dihapus.'),
                     backgroundColor: Colors.red,
+                    behavior: SnackBarBehavior.floating,
+                    margin: const EdgeInsets.all(20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 );
               },
@@ -327,7 +330,6 @@ class MenuCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              // Tag harus unik untuk setiap item.
               tag: menu.name,
               child: LocalOrNetworkImage(
                 imageUrl: menu.imageUrl,
@@ -336,7 +338,6 @@ class MenuCard extends StatelessWidget {
                 errorIcon: Icons.fastfood,
               ),
             ),
-
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),

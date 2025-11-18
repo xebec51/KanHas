@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-// --- TAMBAHKAN IMPOR INI ---
 import 'package:kanhas/models/order_history_model.dart';
 
 class OrderHistoryPage extends StatelessWidget {
@@ -8,13 +7,10 @@ class OrderHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // --- GUNAKAN CONSUMER UNTUK MENDENGARKAN PERUBAHAN ---
     return Consumer<OrderHistoryModel>(
       builder: (context, orderHistory, child) {
 
-        // Cek jika riwayat masih kosong
         if (orderHistory.orders.isEmpty) {
-          // Tampilkan UI "Kosong" yang sudah ada
           return Scaffold(
             appBar: AppBar(
               title: const Text('Riwayat Pesanan'),
@@ -41,7 +37,6 @@ class OrderHistoryPage extends StatelessWidget {
           );
         }
 
-        // --- TAMPILKAN DAFTAR PESANAN JIKA TIDAK KOSONG ---
         return Scaffold(
           appBar: AppBar(
             title: const Text('Riwayat Pesanan'),
@@ -50,21 +45,17 @@ class OrderHistoryPage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             itemCount: orderHistory.orders.length,
             itemBuilder: (context, index) {
-              // Ambil satu pesanan dari model
               final order = orderHistory.orders[index];
 
-              // Format tanggal (cara sederhana tanpa package tambahan)
               final String formattedDate =
                   "${order.orderDate.day}/${order.orderDate.month}/${order.orderDate.year} "
                   "${order.orderDate.hour.toString().padLeft(2, '0')}:"
                   "${order.orderDate.minute.toString().padLeft(2, '0')}";
 
-              // Buat ringkasan item
               final String itemSummary = order.items
                   .map((item) => "${item.menu.name} (x${item.quantity})")
                   .join(', ');
 
-              // Tampilkan sebagai Kartu (Card)
               return Card(
                 elevation: 3,
                 margin:
@@ -77,7 +68,6 @@ class OrderHistoryPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Baris 1: Tanggal dan Total Harga
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -100,7 +90,6 @@ class OrderHistoryPage extends StatelessWidget {
                         ],
                       ),
                       const Divider(height: 24),
-                      // Baris 2: Ringkasan Item
                       Text(
                         itemSummary,
                         style: const TextStyle(
@@ -109,7 +98,6 @@ class OrderHistoryPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      // Baris 3: ID Pesanan
                       Text(
                         'Order ID: #${order.id}',
                         style: TextStyle(
@@ -124,7 +112,6 @@ class OrderHistoryPage extends StatelessWidget {
             },
           ),
         );
-        // --- AKHIR TAMPILAN DAFTAR ---
       },
     );
   }

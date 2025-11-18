@@ -1,8 +1,6 @@
-// lib/screens/add_menu_page.dart
-
-import 'dart:io'; // <-- TAMBAHKAN INI
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:kanhas/helpers/image_helper.dart'; // <-- TAMBAHKAN INI
+import 'package:kanhas/helpers/image_helper.dart';
 import 'package:kanhas/models/canteen_data.dart';
 import 'package:kanhas/models/canteen_model.dart';
 import 'package:provider/provider.dart';
@@ -19,11 +17,8 @@ class _AddMenuPageState extends State<AddMenuPage> {
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
   final _descController = TextEditingController();
-  // final _imageUrlController = TextEditingController(); // <-- HAPUS INI
 
-  // --- TAMBAHKAN STATE UNTUK PATH GAMBAR ---
   String? _pickedImagePath;
-  // ----------------------------------------
 
   final _formKey = GlobalKey<FormState>();
 
@@ -32,11 +27,9 @@ class _AddMenuPageState extends State<AddMenuPage> {
     _nameController.dispose();
     _priceController.dispose();
     _descController.dispose();
-    // _imageUrlController.dispose(); // <-- HAPUS INI
     super.dispose();
   }
 
-  // --- TAMBAHKAN FUNGSI PICK IMAGE ---
   Future<void> _pickImage() async {
     final String? imagePath = await ImageHelper.pickAndSaveImage();
     if (imagePath != null) {
@@ -45,16 +38,14 @@ class _AddMenuPageState extends State<AddMenuPage> {
       });
     }
   }
-  // ----------------------------------
 
   void _saveMenu() {
-    // --- PERBARUI LOGIKA VALIDASI DAN SAVE ---
     if (_formKey.currentState!.validate() && _pickedImagePath != null) {
       final newMenu = Menu(
         name: _nameController.text,
         price: int.parse(_priceController.text),
         description: _descController.text,
-        imageUrl: _pickedImagePath!, // <-- GANTI DENGAN PATH LOKAL
+        imageUrl: _pickedImagePath!,
       );
 
       context.read<CanteenModel>().addMenuToCanteen(widget.canteen, newMenu);
@@ -62,7 +53,7 @@ class _AddMenuPageState extends State<AddMenuPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${newMenu.name} berhasil ditambahkan!'),
-          // Tambahkan behavior floating agar konsisten
+          backgroundColor: Colors.green, // Tambahkan warna sukses
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(
@@ -73,7 +64,6 @@ class _AddMenuPageState extends State<AddMenuPage> {
 
       Navigator.pop(context);
     } else if (_pickedImagePath == null) {
-      // Tampilkan error jika gambar kosong
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Silakan pilih gambar menu terlebih dahulu.'),
@@ -86,7 +76,6 @@ class _AddMenuPageState extends State<AddMenuPage> {
         ),
       );
     }
-    // --- AKHIR PERBARUAN ---
   }
 
   @override
@@ -151,15 +140,10 @@ class _AddMenuPageState extends State<AddMenuPage> {
                 },
               ),
               const SizedBox(height: 16),
-
-              // --- HAPUS TEXTFORMFIELD URL GAMBAR ---
-              // TextFormField( ... ),
-
-              // --- TAMBAHKAN UI IMAGE PICKER ---
               const Text('Gambar Menu:', style: TextStyle(fontSize: 16)),
               const SizedBox(height: 8),
               InkWell(
-                onTap: _pickImage, // Panggil fungsi pilih gambar
+                onTap: _pickImage,
                 child: Container(
                   height: 200,
                   width: double.infinity,
@@ -168,7 +152,6 @@ class _AddMenuPageState extends State<AddMenuPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: _pickedImagePath == null
-                  // Tampilan jika gambar BELUM dipilih
                       ? const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -178,7 +161,6 @@ class _AddMenuPageState extends State<AddMenuPage> {
                       Text('Ketuk untuk pilih gambar'),
                     ],
                   )
-                  // Tampilan jika gambar SUDAH dipilih
                       : ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.file(
@@ -188,8 +170,6 @@ class _AddMenuPageState extends State<AddMenuPage> {
                   ),
                 ),
               ),
-              // ------------------------------------
-
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _saveMenu,

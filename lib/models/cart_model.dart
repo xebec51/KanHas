@@ -19,7 +19,6 @@ class CartModel extends ChangeNotifier {
   }
 
   int get itemCount {
-    // 'itemCount' adalah total item, bukan jumlah jenis item.
     return _items.fold(0, (sum, item) => sum + item.quantity);
   }
 

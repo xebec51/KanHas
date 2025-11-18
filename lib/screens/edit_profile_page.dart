@@ -81,32 +81,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
 
-    // --- PERBAIKAN 1 DI SINI ---
-    // Kita harus menyertakan info 'fullName' dan 'email' yang sudah ada
-    // saat membuat objek User baru.
     final updatedUser = User(
       username: widget.user.username,
-      password: _newPasswordController.text, // Password baru
+      password: _newPasswordController.text,
       role: widget.user.role,
-      fullName: widget.user.fullName, // <-- TAMBAHKAN INI
-      email: widget.user.email, // <-- TAMBAHKAN INI
-      profileImagePath: widget.user.profileImagePath, // <-- TAMBAHKAN INI
+      fullName: widget.user.fullName,
+      email: widget.user.email,
+      profileImagePath: widget.user.profileImagePath,
     );
-    // ----------------------------
 
     userList[userIndex] = updatedUser;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Password berhasil diperbarui! Silakan login kembali.'),
+        content:
+        const Text('Password berhasil diperbarui! Silakan login kembali.'),
         backgroundColor: Colors.green,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-        ), // <-- PERBAIKAN 2: Kurang ')' di baris sebelumnya
-      ), // <-- Tambahkan ')'
-    ); // <-- Tambahkan ')'
+        ),
+      ),
+    );
 
     Navigator.pushAndRemoveUntil(
       context,
@@ -117,7 +114,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // ... (UI Build Method TIDAK BERUBAH) ...
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ubah Password'),

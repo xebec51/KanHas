@@ -27,7 +27,6 @@ class _LoginPageState extends State<LoginPage> {
 
     User? foundUser;
     try {
-      // Mencari user berdasarkan username.
       foundUser = userList.firstWhere((user) => user.username == username);
     } catch (e) {
       foundUser = null;
@@ -48,8 +47,8 @@ class _LoginPageState extends State<LoginPage> {
     } else if (foundUser.password != password) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Colors.red,
           content: const Text('Password salah!'),
+          backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(
@@ -58,7 +57,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } else {
-      // Hapus halaman login dari tumpukan agar pengguna tidak bisa kembali.
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(

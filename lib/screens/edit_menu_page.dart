@@ -9,7 +9,8 @@ import 'package:provider/provider.dart';
 class EditMenuPage extends StatefulWidget {
   final Canteen canteen;
   final Menu menuToEdit;
-  const EditMenuPage({super.key, required this.canteen, required this.menuToEdit});
+  const EditMenuPage(
+      {super.key, required this.canteen, required this.menuToEdit});
 
   @override
   State<EditMenuPage> createState() => _EditMenuPageState();
@@ -30,7 +31,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
     _nameController.text = widget.menuToEdit.name;
     _priceController.text = widget.menuToEdit.price.toString();
     _descController.text = widget.menuToEdit.description;
-
     _pickedImagePath = widget.menuToEdit.imageUrl;
   }
 
@@ -57,7 +57,7 @@ class _EditMenuPageState extends State<EditMenuPage> {
         name: _nameController.text,
         price: int.parse(_priceController.text),
         description: _descController.text,
-        imageUrl: _pickedImagePath!, // Simpan path gambar yang baru atau yang lama.
+        imageUrl: _pickedImagePath!,
       );
 
       context.read<CanteenModel>().updateMenuInCanteen(
@@ -67,7 +67,15 @@ class _EditMenuPageState extends State<EditMenuPage> {
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${updatedMenu.name} berhasil diperbarui!')),
+        SnackBar(
+          content: Text('${updatedMenu.name} berhasil diperbarui!'),
+          backgroundColor: Colors.green, // Tambahkan warna sukses
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       );
 
       Navigator.pop(context);
@@ -136,7 +144,6 @@ class _EditMenuPageState extends State<EditMenuPage> {
                 },
               ),
               const SizedBox(height: 16),
-
               const Text('Gambar Menu:', style: TextStyle(fontSize: 16)),
               const SizedBox(height: 8),
               InkWell(
@@ -152,23 +159,23 @@ class _EditMenuPageState extends State<EditMenuPage> {
                       ? const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.add_a_photo, color: Colors.grey, size: 50),
+                      Icon(Icons.add_a_photo,
+                          color: Colors.grey, size: 50),
                       SizedBox(height: 8),
                       Text('Ketuk untuk pilih gambar'),
                     ],
                   )
                       : ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: LocalOrNetworkImage(
-                            imageUrl: _pickedImagePath!,
-                            height: 200,
-                            width: double.infinity,
-                            errorIcon: Icons.fastfood,
-                          ),
-                        ),
+                    borderRadius: BorderRadius.circular(10),
+                    child: LocalOrNetworkImage(
+                      imageUrl: _pickedImagePath!,
+                      height: 200,
+                      width: double.infinity,
+                      errorIcon: Icons.fastfood,
+                    ),
+                  ),
                 ),
               ),
-
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _updateMenu,
@@ -177,7 +184,8 @@ class _EditMenuPageState extends State<EditMenuPage> {
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text('Simpan Perubahan', style: TextStyle(fontSize: 18)),
+                child: const Text('Simpan Perubahan',
+                    style: TextStyle(fontSize: 18)),
               ),
             ],
           ),

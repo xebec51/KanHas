@@ -6,7 +6,6 @@ import 'package:kanhas/screens/login_page.dart';
 import 'package:kanhas/screens/edit_profile_page.dart';
 import 'package:kanhas/screens/order_history_page.dart';
 import 'package:kanhas/screens/settings_page.dart';
-// --- TAMBAHKAN IMPOR INI ---
 import 'package:kanhas/screens/edit_info_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -57,7 +56,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    // ... (UI Build Method TIDAK BERUBAH) ...
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil Saya'),
@@ -79,7 +77,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildAvatar() {
-    // ... (Widget _buildAvatar TIDAK BERUBAH) ...
     ImageProvider? backgroundImage;
 
     if (currentUser.profileImagePath != null) {
@@ -101,7 +98,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileHeader(BuildContext context) {
-    // ... (Widget _buildProfileHeader TIDAK BERUBAH) ...
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24.0),
@@ -158,7 +154,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // --- PERBARUI _buildProfileMenu ---
   Widget _buildProfileMenu(BuildContext context) {
     return Container(
       color: Colors.white,
@@ -167,9 +162,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildMenuTile(
             icon: Icons.edit_outlined,
             title: 'Edit Info Profil',
-            // --- UBAH LOGIKA 'onTap' DI SINI ---
-            onTap: () async { // 1. Jadikan async
-              // 2. Arahkan ke halaman baru dan TUNGGU hasilnya
+            onTap: () async {
               final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -177,15 +170,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               );
 
-              // 3. Cek jika ada data 'User' yang dikembalikan
               if (result != null && result is User) {
-                // 4. Perbarui state lokal agar UI header berubah
                 setState(() {
                   currentUser = result;
                 });
               }
             },
-            // ---------------------------------
           ),
           _buildMenuTile(
             icon: Icons.lock_outline,
@@ -230,7 +220,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildMenuTile({
-    // ... (Widget _buildMenuTile TIDAK BERUBAH) ...
     required IconData icon,
     required String title,
     required VoidCallback onTap,
@@ -267,7 +256,6 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildLogoutButton(BuildContext context) {
-    // ... (Widget _buildLogoutButton TIDAK BERUBAH) ...
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: TextButton.icon(

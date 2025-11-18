@@ -17,7 +17,6 @@ class _EditInfoPageState extends State<EditInfoPage> {
   @override
   void initState() {
     super.initState();
-    // Isi controller dengan data user saat ini
     _fullNameController = TextEditingController(text: widget.user.fullName);
     _emailController = TextEditingController(text: widget.user.email);
   }
@@ -31,23 +30,20 @@ class _EditInfoPageState extends State<EditInfoPage> {
 
   void _saveInfo() {
     if (!_formKey.currentState!.validate()) {
-      return; // Hentikan jika form tidak valid
+      return;
     }
 
-    // 1. Buat objek User yang diperbarui
     final updatedUser = widget.user.copyWith(
       fullName: _fullNameController.text,
       email: _emailController.text,
     );
 
-    // 2. Cari index di userList global dan perbarui
     int userIndex =
     userList.indexWhere((u) => u.username == widget.user.username);
     if (userIndex != -1) {
       userList[userIndex] = updatedUser;
     }
 
-    // 3. Tampilkan notifikasi
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Info profil berhasil diperbarui!'),
@@ -60,7 +56,6 @@ class _EditInfoPageState extends State<EditInfoPage> {
       ),
     );
 
-    // 4. Kembali ke ProfilePage DAN kirim data user yang baru
     Navigator.pop(context, updatedUser);
   }
 

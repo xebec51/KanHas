@@ -1,5 +1,3 @@
-// lib/screens/register_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/user_model.dart';
 
@@ -13,26 +11,23 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  // --- TAMBAHKAN CONTROLLER BARU ---
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>(); // --- TAMBAHKAN FORM KEY ---
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
-    // --- JANGAN LUPA DISPOSE ---
     _fullNameController.dispose();
     _emailController.dispose();
     super.dispose();
   }
 
   void _register() {
-    // --- TAMBAHKAN VALIDASI FORM ---
     if (!_formKey.currentState!.validate()) {
-      return; // Jika form tidak valid, hentikan
+      return;
     }
 
     String username = _usernameController.text;
@@ -60,7 +55,6 @@ class _RegisterPageState extends State<RegisterPage> {
           username: username,
           password: password,
           role: UserRole.mahasiswa,
-          // --- TAMBAHKAN DATA BARU ---
           fullName: fullName,
           email: email,
         ),
@@ -89,7 +83,6 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Padding(
             padding:
             const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
-            // --- BUNGKUS DENGAN FORM ---
             child: Form(
               key: _formKey,
               child: Column(
@@ -116,8 +109,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   const SizedBox(height: 40),
-
-                  // --- FIELD NAMA LENGKAP ---
                   TextFormField(
                     controller: _fullNameController,
                     decoration: const InputDecoration(
@@ -133,8 +124,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                   ),
                   const SizedBox(height: 20),
-
-                  // --- FIELD EMAIL ---
                   TextFormField(
                     controller: _emailController,
                     decoration: const InputDecoration(
@@ -147,7 +136,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       if (value == null || value.isEmpty) {
                         return 'Email tidak boleh kosong';
                       }
-                      // Validasi email sederhana
                       if (!value.contains('@') || !value.contains('.')) {
                         return 'Masukkan email yang valid';
                       }
@@ -155,8 +143,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                   ),
                   const SizedBox(height: 20),
-
-                  // --- FIELD USERNAME ---
                   TextFormField(
                     controller: _usernameController,
                     decoration: const InputDecoration(
@@ -175,8 +161,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                   ),
                   const SizedBox(height: 20),
-
-                  // --- FIELD PASSWORD ---
                   TextFormField(
                     controller: _passwordController,
                     obscureText: true,
@@ -195,7 +179,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       return null;
                     },
                   ),
-
                   const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: _register,

@@ -1,5 +1,3 @@
-// lib/models/canteen_data.dart
-
 class Canteen {
   final String name;
   final String location;
