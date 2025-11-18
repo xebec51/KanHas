@@ -32,13 +32,11 @@ final List<Canteen> initialCanteens = [
   Canteen(
     name: 'Kantin Rama',
     location: 'Gedung FT, Lantai 1',
-    // URL ini Bekerja
     imageUrl:
     'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop',
     menus: [
       Menu(
         name: 'Nasi Kuning',
-        // --- URL GAMBAR DIGANTI (DARI PEXELS) ---
         imageUrl:
         'https://images.pexels.com/photos/6937455/pexels-photo-6937455.jpeg',
         price: 15000,
@@ -46,7 +44,6 @@ final List<Canteen> initialCanteens = [
       ),
       Menu(
         name: 'Soto Ayam',
-        // --- URL GAMBAR DIGANTI (DARI PEXELS) ---
         imageUrl:
         'https://images.pexels.com/photos/12676932/pexels-photo-12676932.jpeg',
         price: 12000,
@@ -57,13 +54,11 @@ final List<Canteen> initialCanteens = [
   Canteen(
     name: 'Kantin Sinta',
     location: 'Area Fakultas FIB',
-    // URL ini Bekerja
     imageUrl:
     'https://images.unsplash.com/photo-1555992336-fb0d29498b13?q=80&w=1887&auto=format&fit=crop',
     menus: [
       Menu(
         name: 'Gado-Gado',
-        // URL ini Bekerja
         imageUrl:
         'https://images.unsplash.com/photo-1604909052743-94e838986d24?q=80&w=2070&auto=format&fit=crop',
         price: 10000,
@@ -71,7 +66,6 @@ final List<Canteen> initialCanteens = [
       ),
       Menu(
         name: 'Es Teh Manis',
-        // --- URL GAMBAR DIGANTI (DARI PEXELS) ---
         imageUrl:
         'https://images.unsplash.com/photo-1594136579292-d98588fe6429?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
         price: 5000,
