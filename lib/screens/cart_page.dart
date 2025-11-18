@@ -97,7 +97,8 @@ class CartPage extends StatelessWidget {
                             ),
                             Text(
                               '${cartItem.quantity}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             IconButton(
                               icon: const Icon(Icons.add, size: 18),

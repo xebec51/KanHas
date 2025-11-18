@@ -43,7 +43,8 @@ class LocalOrNetworkImage extends StatelessWidget {
             height: height,
             width: width,
             color: Colors.grey[300],
-            child: const Center(child: CircularProgressIndicator(color: Colors.red)),
+            child: const Center(
+                child: CircularProgressIndicator(color: Colors.red)),
           );
         },
         errorBuilder: (context, error, stackTrace) {

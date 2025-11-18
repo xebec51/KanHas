@@ -15,7 +15,6 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  // `late` digunakan agar bisa mengakses 'widget.user' saat inisialisasi.
   late final List<Widget> _pages;
 
   @override
@@ -37,33 +36,32 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // IndexedStack digunakan agar state setiap halaman tetap terjaga saat berpindah tab.
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
       ),
-
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.red,
-        unselectedItemColor: Colors.grey,
-
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+      bottomNavigationBar: NavigationBar(
+        destinations: const <Widget>[
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
+          NavigationDestination(
+            icon: Icon(Icons.shopping_cart_outlined),
+            selectedIcon: Icon(Icons.shopping_cart),
             label: 'Keranjang',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
             label: 'Profil',
           ),
         ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: _onItemTapped,
+        indicatorColor: Colors.red[100],
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       ),
     );
   }

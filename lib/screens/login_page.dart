@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
         MaterialPageRoute(
           builder: (context) => MainPage(user: foundUser!),
         ),
-            (route) => false,
+        (route) => false,
       );
     }
   }
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
         child: SingleChildScrollView(
           child: Padding(
             padding:
-            const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+                const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

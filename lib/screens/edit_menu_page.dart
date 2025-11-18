@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kanhas/helpers/image_helper.dart';
 import 'package:kanhas/models/canteen_data.dart';
@@ -61,10 +60,10 @@ class _EditMenuPageState extends State<EditMenuPage> {
       );
 
       context.read<CanteenModel>().updateMenuInCanteen(
-        widget.canteen,
-        widget.menuToEdit,
-        updatedMenu,
-      );
+            widget.canteen,
+            widget.menuToEdit,
+            updatedMenu,
+          );
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -157,23 +156,23 @@ class _EditMenuPageState extends State<EditMenuPage> {
                   ),
                   child: _pickedImagePath == null
                       ? const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add_a_photo,
-                          color: Colors.grey, size: 50),
-                      SizedBox(height: 8),
-                      Text('Ketuk untuk pilih gambar'),
-                    ],
-                  )
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_a_photo,
+                                color: Colors.grey, size: 50),
+                            SizedBox(height: 8),
+                            Text('Ketuk untuk pilih gambar'),
+                          ],
+                        )
                       : ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: LocalOrNetworkImage(
-                      imageUrl: _pickedImagePath!,
-                      height: 200,
-                      width: double.infinity,
-                      errorIcon: Icons.fastfood,
-                    ),
-                  ),
+                          borderRadius: BorderRadius.circular(10),
+                          child: LocalOrNetworkImage(
+                            imageUrl: _pickedImagePath!,
+                            height: 200,
+                            width: double.infinity,
+                            errorIcon: Icons.fastfood,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 32),

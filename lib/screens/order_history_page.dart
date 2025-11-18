@@ -9,7 +9,6 @@ class OrderHistoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<OrderHistoryModel>(
       builder: (context, orderHistory, child) {
-
         if (orderHistory.orders.isEmpty) {
           return Scaffold(
             appBar: AppBar(
@@ -59,7 +58,7 @@ class OrderHistoryPage extends StatelessWidget {
               return Card(
                 elevation: 3,
                 margin:
-                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

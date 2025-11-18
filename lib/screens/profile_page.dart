@@ -29,10 +29,12 @@ class _ProfilePageState extends State<ProfilePage> {
     final String? imagePath = await ImageHelper.pickAndSaveImage();
     if (imagePath == null) return;
 
+    if (!mounted) return;
+
     final updatedUser = currentUser.copyWith(profileImagePath: imagePath);
 
     int userIndex =
-    userList.indexWhere((u) => u.username == currentUser.username);
+        userList.indexWhere((u) => u.username == currentUser.username);
     if (userIndex != -1) {
       userList[userIndex] = updatedUser;
     }
@@ -89,10 +91,10 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundImage: backgroundImage,
       child: backgroundImage == null
           ? Icon(
-        Icons.person,
-        size: 60,
-        color: Colors.red[700],
-      )
+              Icons.person,
+              size: 60,
+              color: Colors.red[700],
+            )
           : null,
     );
   }
@@ -243,7 +245,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         fontSize: 16, fontWeight: FontWeight.w500),
                   ),
                   const Spacer(),
-                  Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16),
+                  Icon(Icons.arrow_forward_ios,
+                      color: Colors.grey[400], size: 16),
                 ],
               ),
             ),
@@ -276,7 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const LoginPage()),
-                (route) => false,
+            (route) => false,
           );
         },
       ),

@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kanhas/helpers/image_helper.dart';
 import 'package:kanhas/models/canteen_data.dart';
@@ -56,9 +55,9 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
       );
 
       context.read<CanteenModel>().updateCanteen(
-        widget.canteenToEdit,
-        updatedCanteen,
-      );
+            widget.canteenToEdit,
+            updatedCanteen,
+          );
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -131,23 +130,23 @@ class _EditCanteenPageState extends State<EditCanteenPage> {
                   ),
                   child: _pickedImagePath == null
                       ? const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add_a_photo,
-                          color: Colors.grey, size: 50),
-                      SizedBox(height: 8),
-                      Text('Ketuk untuk pilih gambar'),
-                    ],
-                  )
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_a_photo,
+                                color: Colors.grey, size: 50),
+                            SizedBox(height: 8),
+                            Text('Ketuk untuk pilih gambar'),
+                          ],
+                        )
                       : ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: LocalOrNetworkImage(
-                      imageUrl: _pickedImagePath!,
-                      height: 200,
-                      width: double.infinity,
-                      errorIcon: Icons.store,
-                    ),
-                  ),
+                          borderRadius: BorderRadius.circular(10),
+                          child: LocalOrNetworkImage(
+                            imageUrl: _pickedImagePath!,
+                            height: 200,
+                            width: double.infinity,
+                            errorIcon: Icons.store,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 32),

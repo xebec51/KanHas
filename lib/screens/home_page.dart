@@ -67,11 +67,11 @@ class _HomePageState extends State<HomePage> {
                   prefixIcon: const Icon(Icons.search),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      _searchController.clear();
-                    },
-                  )
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                          },
+                        )
                       : null,
                   filled: true,
                   fillColor: Colors.grey[200],
@@ -87,13 +87,13 @@ class _HomePageState extends State<HomePage> {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 10),
-
               if (filteredCanteens.isEmpty)
                 Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.store_mall_directory_outlined, size: 60, color: Colors.grey[400]),
+                      Icon(Icons.store_mall_directory_outlined,
+                          size: 60, color: Colors.grey[400]),
                       const SizedBox(height: 16),
                       Text(
                         'Kantin tidak ditemukan',
@@ -141,7 +141,8 @@ class _HomePageState extends State<HomePage> {
                             top: 0,
                             right: 0,
                             child: IconButton(
-                              icon: const Icon(Icons.delete_forever_rounded, size: 20),
+                              icon: const Icon(Icons.delete_forever_rounded,
+                                  size: 20),
                               color: Colors.white,
                               style: IconButton.styleFrom(
                                 backgroundColor: Colors.red.withAlpha(204),
@@ -159,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                                       title: const Text('Hapus Kantin'),
                                       content: Text(
                                         'Apakah Anda yakin ingin menghapus ${canteen.name}? '
-                                            'Semua menu di dalamnya juga akan terhapus.',
+                                        'Semua menu di dalamnya juga akan terhapus.',
                                       ),
                                       actions: [
                                         TextButton(
@@ -183,10 +184,13 @@ class _HomePageState extends State<HomePage> {
                                                 content: Text(
                                                     '${canteen.name} telah dihapus.'),
                                                 backgroundColor: Colors.red,
-                                                behavior: SnackBarBehavior.floating,
-                                                margin: const EdgeInsets.all(20),
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                margin:
+                                                    const EdgeInsets.all(20),
                                                 shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
                                                 ),
                                               ),
                                             );
@@ -236,15 +240,16 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: (widget.user.role == UserRole.admin)
           ? FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddCanteenPage()),
-          );
-        },
-        backgroundColor: Colors.red,
-        child: const Icon(Icons.add_business, color: Colors.white),
-      )
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AddCanteenPage()),
+                );
+              },
+              backgroundColor: Colors.red,
+              child: const Icon(Icons.add_business, color: Colors.white),
+            )
           : null,
     );
   }

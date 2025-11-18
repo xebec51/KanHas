@@ -25,7 +25,7 @@ class CartModel extends ChangeNotifier {
   void add(CartItem item) {
     try {
       CartItem existingItem =
-      _items.firstWhere((i) => i.menu.name == item.menu.name);
+          _items.firstWhere((i) => i.menu.name == item.menu.name);
       existingItem.quantity += item.quantity;
     } catch (e) {
       _items.add(item);

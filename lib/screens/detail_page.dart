@@ -106,7 +106,8 @@ class _DetailPageState extends State<DetailPage> {
                             child: Row(
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.remove, color: Colors.red),
+                                  icon: const Icon(Icons.remove,
+                                      color: Colors.red),
                                   onPressed: _decrementQuantity,
                                 ),
                                 Text(
@@ -118,7 +119,8 @@ class _DetailPageState extends State<DetailPage> {
                                   ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.add, color: Colors.red),
+                                  icon:
+                                      const Icon(Icons.add, color: Colors.red),
                                   onPressed: _incrementQuantity,
                                 ),
                               ],
@@ -200,14 +202,14 @@ class _DetailPageState extends State<DetailPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.white.withOpacity(0.9),
+                  backgroundColor: const Color.fromARGB(230, 255, 255, 255),
                   child: IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.black),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
                 CircleAvatar(
-                  backgroundColor: Colors.white.withOpacity(0.9),
+                  backgroundColor: const Color.fromARGB(230, 255, 255, 255),
                   child: IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -222,7 +224,7 @@ class _DetailPageState extends State<DetailPage> {
                           content: Text(isFavorite
                               ? '${widget.menu.name} ditambahkan ke favorit'
                               : '${widget.menu.name} dihapus dari favorit'),
-                          backgroundColor: Colors.red[400],
+                          backgroundColor: Colors.blue[600],
                           behavior: SnackBarBehavior.floating,
                           margin: const EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),

@@ -32,7 +32,7 @@ class CanteenModel extends ChangeNotifier {
     if (canteenIndex == -1) return;
     final menuIndex = _canteens[canteenIndex].menus.indexWhere(
           (m) => m.name == oldMenu.name && m.price == oldMenu.price,
-    );
+        );
     if (menuIndex == -1) return;
     _canteens[canteenIndex].menus[menuIndex] = newMenu;
     notifyListeners();
@@ -40,7 +40,7 @@ class CanteenModel extends ChangeNotifier {
 
   void updateCanteen(Canteen oldCanteen, Canteen newCanteen) {
     final index = _canteens.indexWhere(
-            (c) => c.name == oldCanteen.name && c.location == oldCanteen.location);
+        (c) => c.name == oldCanteen.name && c.location == oldCanteen.location);
     if (index != -1) {
       _canteens[index] = newCanteen;
       notifyListeners();
@@ -49,7 +49,7 @@ class CanteenModel extends ChangeNotifier {
 
   void deleteCanteen(Canteen canteen) {
     _canteens.removeWhere(
-            (c) => c.name == canteen.name && c.location == canteen.location);
+        (c) => c.name == canteen.name && c.location == canteen.location);
     notifyListeners();
   }
 }

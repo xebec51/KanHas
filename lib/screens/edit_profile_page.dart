@@ -64,7 +64,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
 
     int userIndex =
-    userList.indexWhere((u) => u.username == widget.user.username);
+        userList.indexWhere((u) => u.username == widget.user.username);
 
     if (userIndex == -1) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -95,7 +95,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content:
-        const Text('Password berhasil diperbarui! Silakan login kembali.'),
+            const Text('Password berhasil diperbarui! Silakan login kembali.'),
         backgroundColor: Colors.green,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(20),
@@ -108,7 +108,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LoginPage()),
-          (route) => false,
+      (route) => false,
     );
   }
 

@@ -39,7 +39,7 @@ class _EditInfoPageState extends State<EditInfoPage> {
     );
 
     int userIndex =
-    userList.indexWhere((u) => u.username == widget.user.username);
+        userList.indexWhere((u) => u.username == widget.user.username);
     if (userIndex != -1) {
       userList[userIndex] = updatedUser;
     }

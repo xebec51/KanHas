@@ -43,7 +43,7 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     final canteenModel = context.watch<CanteenModel>();
     final Canteen currentCanteen = canteenModel.canteens.firstWhere(
-          (c) => c.name == widget.canteen.name,
+      (c) => c.name == widget.canteen.name,
       orElse: () => widget.canteen,
     );
 
@@ -80,11 +80,11 @@ class _MenuPageState extends State<MenuPage> {
                   prefixIcon: const Icon(Icons.search),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      _searchController.clear();
-                    },
-                  )
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                          },
+                        )
                       : null,
                   filled: true,
                   fillColor: Colors.grey[200],
@@ -95,18 +95,15 @@ class _MenuPageState extends State<MenuPage> {
                 ),
               ),
               const SizedBox(height: 20),
-
               _buildFilterChips(),
               const SizedBox(height: 20),
-
               Text(
                 'Semua Menu',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
               const SizedBox(height: 10),
-
               if (filteredMenus.isEmpty)
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 50),
@@ -212,25 +209,31 @@ class _MenuPageState extends State<MenuPage> {
       ),
       floatingActionButton: (widget.user.role == UserRole.admin)
           ? FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddMenuPage(
-                canteen: currentCanteen,
-              ),
-            ),
-          );
-        },
-        backgroundColor: Colors.red,
-        child: const Icon(Icons.add, color: Colors.white),
-      )
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddMenuPage(
+                      canteen: currentCanteen,
+                    ),
+                  ),
+                );
+              },
+              backgroundColor: Colors.red,
+              child: const Icon(Icons.add, color: Colors.white),
+            )
           : null,
     );
   }
 
   Widget _buildFilterChips() {
-    final List<String> categories = ['All', 'Nasi', 'Minuman', 'Snack', 'Gorengan'];
+    final List<String> categories = [
+      'All',
+      'Nasi',
+      'Minuman',
+      'Snack',
+      'Gorengan'
+    ];
     return SizedBox(
       height: 40,
       child: ListView.builder(

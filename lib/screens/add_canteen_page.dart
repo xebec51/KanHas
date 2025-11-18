@@ -130,21 +130,21 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
                   ),
                   child: _pickedImagePath == null
                       ? const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add_a_photo,
-                          color: Colors.grey, size: 50),
-                      SizedBox(height: 8),
-                      Text('Ketuk untuk pilih gambar'),
-                    ],
-                  )
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add_a_photo,
+                                color: Colors.grey, size: 50),
+                            SizedBox(height: 8),
+                            Text('Ketuk untuk pilih gambar'),
+                          ],
+                        )
                       : ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.file(
-                      File(_pickedImagePath!),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.file(
+                            File(_pickedImagePath!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 32),
@@ -156,7 +156,7 @@ class _AddCanteenPageState extends State<AddCanteenPage> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child:
-                const Text('Simpan Kantin', style: TextStyle(fontSize: 18)),
+                    const Text('Simpan Kantin', style: TextStyle(fontSize: 18)),
               ),
             ],
           ),
