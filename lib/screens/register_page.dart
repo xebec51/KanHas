@@ -19,10 +19,15 @@ class _RegisterPageState extends State<RegisterPage> {
     bool userExists = userList.any((user) => user.username == username);
 
     if (userExists) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).sckBar(
         const SnackBar(
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.rconst ed,
           content: Text('Username sudah terdaftar!'),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     } else {
@@ -35,9 +40,14 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           backgroundColor: Colors.green,
-          content: Text('Registrasi berhasil! Silakan login.'),
+          content: const Text('Registrasi berhasil! Silakan login.'),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
       Navigator.pop(context);

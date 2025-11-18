@@ -35,9 +35,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     if (_oldPasswordController.text != widget.user.password) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password lama Anda salah!'),
+        SnackBar(
+          content: const Text('Password lama Anda salah!'),
           backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
       return;
@@ -45,9 +50,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     if (_newPasswordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password baru dan konfirmasi tidak cocok!'),
+        SnackBar(
+          content: const Text('Password baru dan konfirmasi tidak cocok!'),
           backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
       return;
@@ -62,6 +72,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         const SnackBar(
           content: Text('Gagal menemukan user. Silakan login ulang.'),
           backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
       return;
@@ -74,12 +89,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
       role: widget.user.role,
     );
 
-    userList[userIndex] = updatedUser;
+   ist[userIndex] = updatedUseconst r;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Password berhasil diperbarui! Silakan login kembali.'),
+      SnackBar(
+        content: const Text('Password berhasil diperbarui! Silakan login kembali.'),
         backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
       ),
     );
 
