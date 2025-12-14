@@ -57,7 +57,7 @@ Aplikasi ini memiliki dua peran pengguna yang berbeda (Admin dan Mahasiswa) deng
 
 ---
 
-## 🏃 Cara Menjalankan
+## 🏃 Cara Menjalankan Proyek
 
 1.  Pastikan Anda memiliki Flutter SDK yang terinstal.
 2.  Clone repositori ini:
