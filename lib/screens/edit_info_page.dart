@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:kanhas/models/user_model.dart';
+import 'package:kanhas/providers/auth_provider.dart';
 
 class EditInfoPage extends StatefulWidget {
   final User user;
@@ -28,31 +30,27 @@ class _EditInfoPageState extends State<EditInfoPage> {
     super.dispose();
   }
 
-  void _saveInfo() {
+  void _saveInfo() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
+    // Gunakan copyWith yang sudah kita tambahkan di model
     final updatedUser = widget.user.copyWith(
       fullName: _fullNameController.text,
       email: _emailController.text,
     );
 
-    int userIndex =
-        userList.indexWhere((u) => u.username == widget.user.username);
-    if (userIndex != -1) {
-      userList[userIndex] = updatedUser;
-    }
+    // Panggil Provider untuk simpan perubahan
+    await context.read<AuthProvider>().updateUser(updatedUser);
+
+    if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Info profil berhasil diperbarui!'),
         backgroundColor: Colors.green,
         behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
       ),
     );
 
@@ -74,51 +72,30 @@ class _EditInfoPageState extends State<EditInfoPage> {
               TextFormField(
                 controller: _fullNameController,
                 decoration: const InputDecoration(
-                  labelText: 'Nama Lengkap',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.badge_outlined),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Nama lengkap tidak boleh kosong';
-                  }
-                  return null;
-                },
+                    labelText: 'Nama Lengkap',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.badge_outlined)),
+                validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
               ),
               const SizedBox(height: 20),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email_outlined),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Email tidak boleh kosong';
-                  }
-                  if (!value.contains('@') || !value.contains('.')) {
-                    return 'Masukkan email yang valid';
-                  }
-                  return null;
-                },
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.email_outlined)),
+                validator: (v) => !v!.contains('@') ? 'Email tidak valid' : null,
               ),
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: _saveInfo,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Simpan Perubahan',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50)),
+                child: const Text('Simpan Perubahan',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
             ],
           ),

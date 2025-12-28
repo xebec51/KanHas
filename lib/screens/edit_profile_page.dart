@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:kanhas/models/user_model.dart';
-import 'package:kanhas/screens/login_page.dart';
+import 'package:kanhas/providers/auth_provider.dart';
 
 class EditProfilePage extends StatefulWidget {
   final User user;
@@ -28,88 +29,47 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.dispose();
   }
 
-  void _savePassword() {
+  void _savePassword() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
     if (_oldPasswordController.text != widget.user.password) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Password lama Anda salah!'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
+        const SnackBar(
+            content: Text('Password lama Anda salah!'),
+            backgroundColor: Colors.red),
       );
       return;
     }
 
     if (_newPasswordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Password baru dan konfirmasi tidak cocok!'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
+        const SnackBar(
+            content: Text('Password baru dan konfirmasi tidak cocok!'),
+            backgroundColor: Colors.red),
       );
       return;
     }
 
-    int userIndex =
-        userList.indexWhere((u) => u.username == widget.user.username);
-
-    if (userIndex == -1) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Gagal menemukan user. Silakan login ulang.'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-      return;
-    }
-
-    final updatedUser = User(
-      username: widget.user.username,
+    // Buat objek user baru dengan password baru
+    final updatedUser = widget.user.copyWith(
       password: _newPasswordController.text,
-      role: widget.user.role,
-      fullName: widget.user.fullName,
-      email: widget.user.email,
-      profileImagePath: widget.user.profileImagePath,
     );
 
-    userList[userIndex] = updatedUser;
+    // Update via Provider
+    await context.read<AuthProvider>().updateUser(updatedUser);
+
+    if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content:
-            const Text('Password berhasil diperbarui! Silakan login kembali.'),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
+      const SnackBar(
+          content: Text('Password berhasil diperbarui!'),
+          backgroundColor: Colors.green),
     );
 
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
-      (route) => false,
-    );
+    // Kembali ke halaman sebelumnya (Profile)
+    Navigator.pop(context);
   }
 
   @override
@@ -134,19 +94,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   suffixIcon: IconButton(
                     icon: Icon(
                         _obscureOld ? Icons.visibility_off : Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        _obscureOld = !_obscureOld;
-                      });
-                    },
+                    onPressed: () => setState(() => _obscureOld = !_obscureOld),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Password lama tidak boleh kosong';
-                  }
-                  return null;
-                },
+                validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -159,22 +110,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   suffixIcon: IconButton(
                     icon: Icon(
                         _obscureNew ? Icons.visibility_off : Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        _obscureNew = !_obscureNew;
-                      });
-                    },
+                    onPressed: () => setState(() => _obscureNew = !_obscureNew),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Password baru tidak boleh kosong';
-                  }
-                  if (value.length < 3) {
-                    return 'Password minimal 3 karakter';
-                  }
-                  return null;
-                },
+                validator: (v) => v!.length < 3 ? 'Min 3 karakter' : null,
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -188,35 +127,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     icon: Icon(_obscureConfirm
                         ? Icons.visibility_off
                         : Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        _obscureConfirm = !_obscureConfirm;
-                      });
-                    },
+                    onPressed: () =>
+                        setState(() => _obscureConfirm = !_obscureConfirm),
                   ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Konfirmasi password tidak boleh kosong';
-                  }
-                  return null;
-                },
+                validator: (v) => v!.isEmpty ? 'Wajib diisi' : null,
               ),
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: _savePassword,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Simpan Perubahan',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(double.infinity, 50)),
+                child: const Text('Simpan Perubahan',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
             ],
           ),

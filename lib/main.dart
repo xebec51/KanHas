@@ -3,16 +3,17 @@
 import 'package:flutter/material.dart';
 import 'package:kanhas/models/cart_model.dart';
 import 'package:kanhas/models/canteen_model.dart';
-// --- TAMBAHKAN IMPOR INI ---
 import 'package:kanhas/models/order_history_model.dart';
-// -------------------------
+import 'package:kanhas/providers/auth_provider.dart';
 import 'package:kanhas/screens/login_page.dart';
 import 'package:provider/provider.dart';
+import 'package:kanhas/screens/main_page.dart';
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
         // Provider #1: Keranjang
         ChangeNotifierProvider(create: (context) => CartModel()),
 
@@ -41,7 +42,16 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const LoginPage(),
+      home: Consumer<AuthProvider>(
+        builder: (context, auth, child) {
+          // Jika user sudah login (tersimpan di HP), langsung ke MainPage
+          if (auth.currentUser != null) {
+            return MainPage(user: auth.currentUser!);
+          }
+          // Jika belum, ke LoginPage
+          return const LoginPage();
+        },
+      ),
       debugShowCheckedModeBanner: false,
     );
   }

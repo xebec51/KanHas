@@ -1,6 +1,8 @@
+// lib/screens/login_page.dart
+
 import 'package:flutter/material.dart';
-import 'package:kanhas/models/user_model.dart';
-import 'package:kanhas/screens/main_page.dart';
+import 'package:provider/provider.dart';
+import 'package:kanhas/providers/auth_provider.dart';
 import 'package:kanhas/screens/register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,6 +16,9 @@ class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  // Status untuk menampilkan loading spinner
+  bool _isLoading = false;
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -21,48 +26,47 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  void _login() {
+  void _login() async {
+    // 1. Tutup keyboard
+    FocusScope.of(context).unfocus();
+
+    // 2. Set status loading
+    setState(() {
+      _isLoading = true;
+    });
+
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-    User? foundUser;
-    try {
-      foundUser = userList.firstWhere((user) => user.username == username);
-    } catch (e) {
-      foundUser = null;
-    }
+    // 3. Panggil fungsi login dari AuthProvider
+    // Kita menggunakan context.read karena ini aksi sekali panggil (bukan listening data)
+    bool success = await context.read<AuthProvider>().login(username, password);
 
-    if (foundUser == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Username tidak ditemukan!'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
-    } else if (foundUser.password != password) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Password salah!'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      );
+    // Cek apakah widget masih aktif sebelum update UI (mencegah error async)
+    if (!mounted) return;
+
+    // 4. Matikan status loading
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (success) {
+      // JIKA SUKSES: 
+      // Kita tidak perlu melakukan Navigator.push manual.
+      // Karena di main.dart kita sudah pasang Consumer<AuthProvider>,
+      // UI akan otomatis berubah ke MainPage begitu status user terisi.
     } else {
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MainPage(user: foundUser!),
+      // JIKA GAGAL: Tampilkan pesan error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Username atau Password salah!'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
-        (route) => false,
       );
     }
   }
@@ -74,7 +78,7 @@ class _LoginPageState extends State<LoginPage> {
         child: SingleChildScrollView(
           child: Padding(
             padding:
-                const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
+            const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -117,7 +121,13 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                ElevatedButton(
+
+                // Tombol Login dengan kondisi Loading
+                _isLoading
+                    ? const Center(
+                  child: CircularProgressIndicator(color: Colors.red),
+                )
+                    : ElevatedButton(
                   onPressed: _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
@@ -132,6 +142,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
+
                 const SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:kanhas/helpers/image_helper.dart';
 import 'package:kanhas/models/user_model.dart';
-import 'package:kanhas/screens/login_page.dart';
+import 'package:kanhas/providers/auth_provider.dart';
 import 'package:kanhas/screens/edit_profile_page.dart';
 import 'package:kanhas/screens/order_history_page.dart';
 import 'package:kanhas/screens/settings_page.dart';
@@ -17,72 +18,67 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late User currentUser;
+  // Kita tidak perlu state 'currentUser' lokal lagi karena data diambil langsung dari Provider
 
-  @override
-  void initState() {
-    super.initState();
-    currentUser = widget.user;
-  }
-
-  Future<void> _pickProfileImage() async {
+  Future<void> _pickProfileImage(BuildContext context) async {
     final String? imagePath = await ImageHelper.pickAndSaveImage();
     if (imagePath == null) return;
 
-    if (!mounted) return;
+    if (!context.mounted) return;
 
-    final updatedUser = currentUser.copyWith(profileImagePath: imagePath);
+    final authProvider = context.read<AuthProvider>();
+    // Pastikan currentUser tidak null sebelum diupdate
+    if (authProvider.currentUser != null) {
+      final updatedUser =
+          authProvider.currentUser!.copyWith(profileImagePath: imagePath);
 
-    int userIndex =
-        userList.indexWhere((u) => u.username == currentUser.username);
-    if (userIndex != -1) {
-      userList[userIndex] = updatedUser;
-    }
+      await authProvider.updateUser(updatedUser);
 
-    setState(() {
-      currentUser = updatedUser;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Foto profil berhasil diperbarui!'),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Foto profil berhasil diperbarui!'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profil Saya'),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.grey[50],
-      ),
-      backgroundColor: Colors.grey[50],
-      body: ListView(
-        children: [
-          _buildProfileHeader(context),
-          const SizedBox(height: 20),
-          _buildProfileMenu(context),
-          const SizedBox(height: 30),
-          _buildLogoutButton(context),
-        ],
-      ),
+    // Bungkus dengan Consumer agar UI update otomatis saat data berubah di halaman Edit
+    return Consumer<AuthProvider>(
+      builder: (context, auth, child) {
+        final currentUser = auth.currentUser!; // Ambil data terbaru dari provider
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Profil Saya'),
+            centerTitle: true,
+            elevation: 0,
+            backgroundColor: Colors.grey[50],
+          ),
+          backgroundColor: Colors.grey[50],
+          body: ListView(
+            children: [
+              _buildProfileHeader(
+                  context, currentUser), // Pass currentUser ke method
+              const SizedBox(height: 20),
+              _buildProfileMenu(context, currentUser),
+              const SizedBox(height: 30),
+              _buildLogoutButton(context),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(User user) {
     ImageProvider? backgroundImage;
 
-    if (currentUser.profileImagePath != null) {
-      backgroundImage = FileImage(File(currentUser.profileImagePath!));
+    if (user.profileImagePath != null) {
+      backgroundImage = FileImage(File(user.profileImagePath!));
     }
 
     return CircleAvatar(
@@ -99,7 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildProfileHeader(BuildContext context) {
+  Widget _buildProfileHeader(BuildContext context, User user) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24.0),
@@ -111,7 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           Stack(
             children: [
-              _buildAvatar(),
+              _buildAvatar(user),
               Positioned(
                 bottom: 0,
                 right: 0,
@@ -120,7 +116,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   backgroundColor: Colors.red,
                   child: IconButton(
                     icon: const Icon(Icons.edit, size: 18, color: Colors.white),
-                    onPressed: _pickProfileImage,
+                    onPressed: () => _pickProfileImage(context),
                   ),
                 ),
               ),
@@ -128,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 16),
           Text(
-            currentUser.fullName,
+            user.fullName,
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -136,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 4),
           Text(
-            currentUser.email,
+            user.email,
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -144,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Role: ${currentUser.role.name}',
+            'Role: ${user.role.name}',
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey[600],
@@ -156,7 +152,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildProfileMenu(BuildContext context) {
+  Widget _buildProfileMenu(BuildContext context, User user) {
     return Container(
       color: Colors.white,
       child: Column(
@@ -164,19 +160,13 @@ class _ProfilePageState extends State<ProfilePage> {
           _buildMenuTile(
             icon: Icons.edit_outlined,
             title: 'Edit Info Profil',
-            onTap: () async {
-              final result = await Navigator.push(
+            onTap: () {
+              Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EditInfoPage(user: currentUser),
+                  builder: (context) => EditInfoPage(user: user),
                 ),
               );
-
-              if (result != null && result is User) {
-                setState(() {
-                  currentUser = result;
-                });
-              }
             },
           ),
           _buildMenuTile(
@@ -186,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EditProfilePage(user: currentUser),
+                  builder: (context) => EditProfilePage(user: user),
                 ),
               );
             },
@@ -276,11 +266,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         onPressed: () {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
-            (route) => false,
-          );
+          // Panggil logout dari provider
+          context.read<AuthProvider>().logout();
+
+          // Tidak perlu navigator push karena main.dart akan otomatis switch ke Login Page
         },
       ),
     );
