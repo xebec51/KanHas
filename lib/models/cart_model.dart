@@ -6,6 +6,21 @@ class CartItem {
   int quantity;
 
   CartItem({required this.menu, this.quantity = 1});
+
+  Map<String, dynamic> toMap() {
+    return {
+      // Kita asumsikan Menu sudah punya toMap dari langkah sebelumnya
+      'menu': menu.toMap(),
+      'quantity': quantity,
+    };
+  }
+
+  factory CartItem.fromMap(Map<String, dynamic> map) {
+    return CartItem(
+      menu: Menu.fromMap(map['menu']),
+      quantity: map['quantity'],
+    );
+  }
 }
 
 class CartModel extends ChangeNotifier {
