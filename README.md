@@ -1,59 +1,46 @@
-# Kanhas (Aplikasi Pemesanan Kantin)
+# Kanhas - Aplikasi Smart Canteen 📱
 
-**Kanhas** adalah aplikasi pemesanan kantin (Canteen Ordering) yang dibangun menggunakan Flutter. Aplikasi ini dibuat sebagai proyek akhir untuk kelas "Belajar Membuat Aplikasi Flutter untuk Pemula" di Dicoding, dengan banyak fitur tambahan untuk menyempurnakan fungsionalitas dan UI/UX.
+<p align="center">
+  <img src="assets/images/logo.png" width="120" alt="Kanhas Logo">
+</p>
 
-Aplikasi ini mengimplementasikan manajemen state menggunakan `provider`, autentikasi lokal, pemisahan peran (Admin & Mahasiswa), dan fungsionalitas CRUD penuh, termasuk unggah gambar lokal.
+![Tampilan Aplikasi Kanhas](assets/images/Screenshoot.png)
 
-![Contoh Tampilan Aplikasi Kanhas](https://via.placeholder.com/800x400.png?text=Sangat+Disarankan+Masukkan+GIF+atau+Mockup+Aplikasi+Anda+di+Sini)
+**Kanhas** adalah aplikasi pemesanan kantin (Canteen Ordering) berbasis Flutter yang dirancang untuk mendigitalisasi sistem pemesanan makanan di lingkungan kampus. Proyek ini dibangun sebagai solusi untuk memecahkan masalah antrean manual, memungkinkan mahasiswa memesan makanan dengan cepat dan efisien.
+
+Aplikasi ini telah dikembangkan lebih lanjut dengan fitur **Full Local Persistence**, **Complex State Management**, dan pemisahan peran pengguna (**Role-Based Access**) antara Mahasiswa dan Admin.
 
 ---
 
-## 🚀 Fitur Utama
+## 🚀 Fitur Unggulan
 
-Aplikasi ini memiliki dua peran pengguna yang berbeda (Admin dan Mahasiswa) dengan fitur yang disesuaikan.
+Aplikasi ini membedakan fitur berdasarkan dua peran pengguna:
 
-### 👨‍🎓 Fitur Mahasiswa
-* **Autentikasi:** Login dan Register (akun disimpan secara lokal).
-* **Navigasi:** Bottom Navigation Bar untuk berpindah antar halaman (Home, Cart, Profile).
-* **Jelajah Kantin:** Melihat daftar kantin dengan fitur **Pencarian** (Search).
-* **Jelajah Menu:** Melihat daftar menu per kantin dengan fitur **Pencarian** dan **Filter Kategori** (Nasi, Minuman, dll).
-* **Detail Menu:** Melihat detail deskripsi menu dengan **Hero Animation** dan desain `SliverAppBar` yang dinamis.
-* **Keranjang Belanja:** Menambah, mengurangi, dan menghapus item dari keranjang (`CartModel`).
-* **Checkout:** Menyelesaikan pesanan, yang akan mengosongkan keranjang.
-* **Riwayat Pesanan:** Melihat daftar semua pesanan yang telah berhasil di-*checkout* (`OrderHistoryModel`).
-* **Profil Kompleks:**
-    * Melihat info profil (Nama Lengkap, Email, Role).
-    * **Mengganti Foto Profil** dari galeri.
-    * **Edit Info Profil** (Nama Lengkap & Email).
-    * **Ubah Password** (memvalidasi password lama).
+### 👨‍🎓 Fitur Mahasiswa (User)
+* **Persistent Login:** Sesi login disimpan secara lokal, pengguna tidak perlu login ulang setiap kali membuka aplikasi.
+* **Smart Cart System:** Keranjang belanja yang interaktif dengan kalkulasi harga otomatis.
+* **Order History:** Melacak riwayat pesanan yang pernah dilakukan (Data tersimpan permanen di perangkat).
+* **Jelajah Menu:** Pencarian menu canggih dengan filter kategori (Makanan Berat, Minuman, Snack).
+* **Profil Kompleks:** Kemampuan mengedit info profil, mengganti foto profil (dari galeri), dan mengubah password dengan validasi keamanan.
 
-### ⚙️ Fitur Admin
-* Memiliki semua fitur Mahasiswa.
-* **CRUD Kantin:**
-    * Menambah kantin baru dengan **unggah gambar lokal**.
-    * Mengedit info kantin (termasuk mengganti gambar).
-    * Menghapus kantin.
-* **CRUD Menu:**
-    * Menambah menu baru di kantin tertentu dengan **unggah gambar lokal**.
-    * Mengedit info menu (termasuk mengganti gambar).
-    * Menghapus menu.
+### 🛡️ Fitur Admin
+* **Manajemen Penuh (CRUD):** Kemampuan untuk Menambah, Mengedit, dan Menghapus data Kantin serta Menu Makanan.
+* **Unggah Gambar Lokal:** Mendukung pengambilan gambar menu/kantin langsung dari galeri perangkat.
+* **Auto-Save Data:** Setiap perubahan data menu atau kantin otomatis tersimpan ke memori perangkat (`Shared Preferences`), sehingga data tidak hilang saat aplikasi ditutup.
 
 ---
 
 ## 🛠️ Arsitektur & Teknologi
 
-* **Framework:** Flutter 3.x
-* **State Management:** `provider` (menggunakan `MultiProvider` untuk `CanteenModel`, `CartModel`, dan `OrderHistoryModel`).
-* **Image Handling:**
-    * `image_picker`: Untuk mengambil gambar dari galeri.
-    * `path_provider`: Untuk menyimpan dan mengambil gambar dari direktori lokal aplikasi.
-* **Navigasi:** `Navigator` 2.0 (standar) dengan `pushAndRemoveUntil` untuk alur autentikasi.
-* **UI/UX:**
-    * `SliverAppBar` untuk detail halaman yang dinamis.
-    * `Hero Animation` untuk transisi gambar yang mulus.
-    * `SnackBarBehavior.floating` untuk notifikasi yang tidak menutupi UI.
-    * `SingleChildScrollView` & `GridView` untuk layout yang responsif dan bebas *overflow*.
-* **Data:** Data disimpan secara *runtime* (dalam memori) pada *list* global. **(Catatan: Data akan reset setiap kali aplikasi ditutup).**
+Proyek ini dibangun menggunakan standar pengembangan modern:
+
+| Komponen | Teknologi/Library | Deskripsi |
+| :--- | :--- | :--- |
+| **Framework** | Flutter 3.x | UI Toolkit & Bahasa Pemrograman (Dart) |
+| **State Management** | Provider | Menggunakan `MultiProvider` untuk manajemen state global (Auth, Cart, Canteen, History) |
+| **Local Storage** | Shared Preferences | Menyimpan data User, Menu, dan Riwayat Pesanan secara permanen (JSON Serialization) |
+| **Image Handling** | Image Picker & Path Provider | Manajemen file gambar lokal dari galeri |
+| **UI/UX** | Material 3 | Desain modern dengan `SliverAppBar`, `Hero Animation`, dan `SnackBar` floting |
 
 ---
 
@@ -68,7 +55,7 @@ Aplikasi ini memiliki dua peran pengguna yang berbeda (Admin dan Mahasiswa) deng
     ```bash
     cd kanhas
     ```
-4.  Dapatkan *dependencies*:
+4.  Unduh *dependencies*:
     ```bash
     flutter pub get
     ```
@@ -79,14 +66,25 @@ Aplikasi ini memiliki dua peran pengguna yang berbeda (Admin dan Mahasiswa) deng
 
 ### 🔐 Akun Demo
 
-Anda dapat menggunakan akun berikut untuk menguji aplikasi:
+Aplikasi ini dilengkapi dengan data akun bawaan untuk pengujian instan:
 
-* **Akun Admin:**
-    * **Username:** `admin`
-    * **Password:** `admin123`
+* **Role Admin:**
+  * **Username:** `admin`
+  * **Password:** `admin123`
 
-* **Akun Mahasiswa:**
-    * **Username:** `mahasiswa`
-    * **Password:** `siswa123`
+* **Role Mahasiswa:**
+  * **Username:** `mahasiswa`
+  * **Password:** `siswa123`
 
-* Atau **buat akun baru** melalui halaman Registrasi (otomatis akan mendapat peran Mahasiswa).
+* Atau **buat akun baru** melalui halaman Registrasi (Data akun baru juga akan tersimpan permanen).
+
+---
+
+## 💡 Pembelajaran Utama (Key Takeaways)
+
+Dalam pengembangan **Kanhas**, fokus teknis utama meliputi:
+1.  **Data Persistence Strategy:** Mengimplementasikan logika serialisasi JSON (`toMap`/`fromMap`) untuk menyimpan objek kompleks ke dalam penyimpanan lokal.
+2.  **State Management:** Pemisahan logika bisnis dari UI menggunakan `Provider` untuk performa aplikasi yang reaktif.
+3.  **Clean Architecture:** Struktur kode yang terorganisir memisahkan Model, View (Screens), dan ViewModel (Providers).
+
+---
