@@ -1,10 +1,8 @@
 # Kanhas - Aplikasi Smart Canteen 📱
 
 <p align="center">
-  <img src="assets/images/logo.png" width="120" alt="Kanhas Logo">
+  <img src="assets/images/logo.png" width="180" alt="Kanhas Logo">
 </p>
-
-![Tampilan Aplikasi Kanhas](assets/images/Screenshoot.png)
 
 **Kanhas** adalah aplikasi pemesanan kantin (Canteen Ordering) berbasis Flutter yang dirancang untuk mendigitalisasi sistem pemesanan makanan di lingkungan kampus. Proyek ini dibangun sebagai solusi untuk memecahkan masalah antrean manual, memungkinkan mahasiswa memesan makanan dengan cepat dan efisien.
 
@@ -69,12 +67,12 @@ Proyek ini dibangun menggunakan standar pengembangan modern:
 Aplikasi ini dilengkapi dengan data akun bawaan untuk pengujian instan:
 
 * **Role Admin:**
-  * **Username:** `admin`
-  * **Password:** `admin123`
+    * **Username:** `admin`
+    * **Password:** `admin123`
 
 * **Role Mahasiswa:**
-  * **Username:** `mahasiswa`
-  * **Password:** `siswa123`
+    * **Username:** `mahasiswa`
+    * **Password:** `siswa123`
 
 * Atau **buat akun baru** melalui halaman Registrasi (Data akun baru juga akan tersimpan permanen).
 
