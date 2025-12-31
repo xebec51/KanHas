@@ -1,4 +1,3 @@
-// lib/models/canteen_data.dart
 import 'dart:convert';
 
 class Canteen {
