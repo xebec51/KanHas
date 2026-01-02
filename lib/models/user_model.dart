@@ -42,7 +42,6 @@ class User {
     return User(
       username: map['username'],
       password: map['password'],
-      // Konversi String ke Enum
       role: UserRole.values.firstWhere(
             (e) => e.toString() == map['role'],
         orElse: () => UserRole.mahasiswa,
