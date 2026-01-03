@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
-// Widget ini dapat menampilkan gambar dari path lokal atau URL jaringan.
+// Widget ini dapat menampilkan gambar dari path lokal atau URL jaringan
 class LocalOrNetworkImage extends StatelessWidget {
   final String imageUrl;
   final double height;
