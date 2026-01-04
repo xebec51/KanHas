@@ -14,7 +14,6 @@ class Order {
     required this.orderDate,
   });
 
-  // --- SERIALIZATION LOGIC ---
   Map<String, dynamic> toMap() {
     return {
       'id': id,
