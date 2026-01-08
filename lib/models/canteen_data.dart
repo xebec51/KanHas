@@ -79,7 +79,6 @@ class Menu {
   factory Menu.fromJson(String source) => Menu.fromMap(json.decode(source));
 }
 
-// Data Awal (Fallback jika penyimpanan kosong)
 final List<Canteen> initialCanteens = [
   Canteen(
     name: 'Kantin Rama',
