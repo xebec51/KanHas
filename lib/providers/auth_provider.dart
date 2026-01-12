@@ -102,7 +102,7 @@ class AuthProvider extends ChangeNotifier {
       await _saveUserList();
     }
 
-    // 2. Jika user yang diedit adalah user yang sedang login, update sesi juga
+    // Jika user yang diedit adalah user yang sedang login, update sesi juga
     if (_currentUser?.username == updatedUser.username) {
       _currentUser = updatedUser;
       final prefs = await SharedPreferences.getInstance();
