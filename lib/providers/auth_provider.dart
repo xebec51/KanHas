@@ -95,7 +95,7 @@ class AuthProvider extends ChangeNotifier {
 
   // --- TAMBAHAN: Update User ---
   Future<void> updateUser(User updatedUser) async {
-    // 1. Update di dalam list besar
+    // Update di dalam list besar
     final index = _registeredUsers.indexWhere((u) => u.username == updatedUser.username);
     if (index != -1) {
       _registeredUsers[index] = updatedUser;
